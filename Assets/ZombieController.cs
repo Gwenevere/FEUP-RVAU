@@ -3,25 +3,15 @@ using UnityEngine.AI;
 
 public class ZombieController : MonoBehaviour
 {
-    public Camera cam;
+    public Camera camera;
 
     public NavMeshAgent agent;
 
+    public GameObject baseObject;
+
     private void Start()
     {
-        GameObject go = new GameObject("Target");
-        Vector3 sourcePostion = new Vector3(100, 20, 100);//The position you want to place your agent
-        NavMeshHit closestHit;
-        if (NavMesh.SamplePosition(sourcePostion, out closestHit, 500, 1))
-        {
-            go.transform.position = closestHit.position;
-            go.AddComponent<NavMeshAgent>();
-            //TODO
-        }
-        else
-        {
-            Debug.Log("...");
-        }
+        baseObject = GameObject.Find("Base");
     }
 
     // Update is called once per frame
@@ -29,14 +19,17 @@ public class ZombieController : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+            /* Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit))
-            {
-                agent.SetDestination(hit.point);
+             if (Physics.Raycast(ray, out hit))
+             {
+                 agent.SetDestination(hit.point);
 
-            }
+             }
+             */
+
+
         }
     }
 }
