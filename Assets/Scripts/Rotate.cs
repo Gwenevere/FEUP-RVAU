@@ -5,7 +5,7 @@ using UnityEngine;
 public class Rotate : MonoBehaviour
 {
 
-    private bool updatedBefore = false;
+    //private bool updatedBefore = false;
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +23,6 @@ public class Rotate : MonoBehaviour
 
         this.transform.Rotate(new Vector3(-90, 0, 0));
 
-        updatedBefore = true;
+        //updatedBefore = true;
     }
 }
