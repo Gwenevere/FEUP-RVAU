@@ -46,7 +46,7 @@ public class Turret : MonoBehaviour
     {
         shoottimer += Time.deltaTime;
         if(shoottimer > 1/fireRate){
-            Debug.Log("Shoot");
+            //Debug.Log("Shoot");
             Instantiate(bullet, firePoint.position, firePoint.rotation);
             shoottimer = 0;
         }
