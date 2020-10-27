@@ -7,7 +7,7 @@ public class ZombieController : MonoBehaviour
 
     public NavMeshAgent agent;
 
-    private GameObject baseObject;
+    private GameObject target;
 
     private Vector3 destination;
 
@@ -15,7 +15,8 @@ public class ZombieController : MonoBehaviour
 
     private void Start()
     {
-        baseObject = GameObject.Find("Base");
+        target = GameObject.Find("Base");
+        agent.Warp(gameObject.transform.position);
     }
 
     // Update is called once per frame
@@ -24,17 +25,18 @@ public class ZombieController : MonoBehaviour
         int threshold = 15;
 
         //Debug.Log(Vector3.Distance(this.transform.position, destination));
-
-        if (walking && Vector3.Distance(this.transform.position, destination) <= threshold && walking)
+/*
+        if (walking && Vector3.Distance(this.transform.position, destination) <= threshold)
         {
             Debug.Log("---------------HERE!-----------------");
             StopMoving();
             // rb.angularVelocity =    ;
             // agent.velocity = Vector3.zero;
         }
+        */
 
-        if (Input.GetMouseButtonDown(0))
-        {
+        //if (Input.GetMouseButtonDown(0))
+        //{
             /*Ray ray = camera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
@@ -46,11 +48,11 @@ public class ZombieController : MonoBehaviour
             }
            */
 
-            destination = baseObject.transform.position;
+            destination = target.transform.position;
             agent.SetDestination(destination);
             StartMoving();
 
-        }
+        //}
     }
 
 

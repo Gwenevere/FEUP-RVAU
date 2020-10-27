@@ -12,6 +12,7 @@ public class Turret : MonoBehaviour
     private float shoottimer = 0;
     public Transform firePoint;
     private Vector3 dir;
+    private bool shooting = false;
     
     // Start is called before the first frame update
     void Start()
@@ -44,20 +45,26 @@ public class Turret : MonoBehaviour
 
     void Shoot()
     {
-        shoottimer += Time.deltaTime;
-        if(shoottimer > 1/fireRate){
-            //Debug.Log("Shoot");
-            Instantiate(bullet, firePoint.position, firePoint.rotation);
-            shoottimer = 0;
+        if(shooting && target != null)
+        {
+            shoottimer += Time.deltaTime;
+            if(shoottimer > 1/fireRate){
+                //Debug.Log("Shoot");
+                Instantiate(bullet, firePoint.position, firePoint.rotation);
+                shoottimer = 0;
+            }
         }
     }
 
     void RotateToTarget()
     {
-        dir = target.transform.position - transform.position;
-        Quaternion lookDir = Quaternion.LookRotation(dir);
-        Vector3 rotation = Quaternion.Lerp(transform.rotation, lookDir, Time.deltaTime).eulerAngles;
-        transform.rotation = Quaternion.Euler(0, rotation.y, 0);
+        if(target != null)
+        {
+            dir = target.transform.position - transform.position;
+            Quaternion lookDir = Quaternion.LookRotation(dir);
+            Vector3 rotation = Quaternion.Lerp(transform.rotation, lookDir, Time.deltaTime).eulerAngles;
+            transform.rotation = Quaternion.Euler(0, rotation.y, 0);
+        }
         
     }
     
