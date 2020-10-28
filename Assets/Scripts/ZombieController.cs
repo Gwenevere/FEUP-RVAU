@@ -4,11 +4,8 @@ using UnityEngine.AI;
 public class ZombieController : MonoBehaviour
 {
     public Camera camera;
-
     public NavMeshAgent agent;
-
     private GameObject target;
-
     private Vector3 destination;
 
     private bool walking = false;
@@ -17,6 +14,8 @@ public class ZombieController : MonoBehaviour
     {
         target = GameObject.Find("Base");
         agent.Warp(gameObject.transform.position);
+        Debug.Log(gameObject.transform.position);
+        Debug.Log(this.agent.transform.position);
     }
 
     // Update is called once per frame
@@ -24,8 +23,8 @@ public class ZombieController : MonoBehaviour
     {
         int threshold = 15;
 
-        //Debug.Log(Vector3.Distance(this.transform.position, destination));
-/*
+        Debug.Log(Vector3.Distance(this.transform.position, destination));
+
         if (walking && Vector3.Distance(this.transform.position, destination) <= threshold)
         {
             Debug.Log("---------------HERE!-----------------");
@@ -33,11 +32,11 @@ public class ZombieController : MonoBehaviour
             // rb.angularVelocity =    ;
             // agent.velocity = Vector3.zero;
         }
-        */
+        
 
-        //if (Input.GetMouseButtonDown(0))
-        //{
-            /*Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+      //  if (Input.GetMouseButtonDown(0))
+       // {
+       /*     Ray ray = camera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
             if (Physics.Raycast(ray, out hit))
@@ -45,14 +44,14 @@ public class ZombieController : MonoBehaviour
                destination = hit.point;
                agent.SetDestination(destination);
                StartMoving();
-            }
-           */
+            }*/
+           
 
             destination = target.transform.position;
             agent.SetDestination(destination);
             StartMoving();
 
-        //}
+       // }
     }
 
 
