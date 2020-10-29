@@ -12,8 +12,8 @@ public class ZombieController : MonoBehaviour
 
     private void Start()
     {
-        target = GameObject.Find("Base");
         agent.Warp(gameObject.transform.position);
+
     }
 
     // Update is called once per frame
@@ -21,7 +21,6 @@ public class ZombieController : MonoBehaviour
     {
         int threshold = 0;
 
-        Logger.Log(Vector3.Distance(this.transform.position, destination));
 
         //if (walking && Vector3.Distance(this.transform.position, destination) <= threshold)
         //{
@@ -30,26 +29,34 @@ public class ZombieController : MonoBehaviour
         //    // rb.angularVelocity =    ;
         //    // agent.velocity = Vector3.zero;
         //}
-        
 
-      //  if (Input.GetMouseButtonDown(0))
-       // {
-       /*     Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit))
-            {
-               destination = hit.point;
-               agent.SetDestination(destination);
-               StartMoving();
-            }*/
-           
+        //  if (Input.GetMouseButtonDown(0))
+        // {
+        /*     Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+             RaycastHit hit;
 
-            destination = target.transform.position;
-            agent.SetDestination(destination);
-            StartMoving();
+             if (Physics.Raycast(ray, out hit))
+             {
+                destination = hit.point;
+                agent.SetDestination(destination);
+                StartMoving();
+             }*/
 
-       // }
+
+
+        // }
+
+        target = GameObject.Find("Base");
+        destination = target.transform.position;
+        agent.SetDestination(destination);
+        StartMoving();
+
+        Logger.Log("Updated ZombieController");
+        Logger.Log("distance: " + Vector3.Distance(this.transform.position, destination));
+        Logger.Log("base postition: " + destination);
+        Logger.Log("this position: " + this.transform.position);
+
     }
 
 
@@ -59,7 +66,7 @@ public class ZombieController : MonoBehaviour
         if (collision.gameObject.name == "Base")
         {
             //If the GameObject's name matches the one you suggest, output this message in the console
-            Debug.Log("Collided!");
+            Logger.Log("Collided!");
 
             StopMoving();
         }

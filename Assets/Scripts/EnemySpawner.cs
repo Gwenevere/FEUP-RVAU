@@ -28,7 +28,7 @@ public class EnemySpawner : MonoBehaviour
     {
         while(true)
         {
-            Debug.Log("Zombie Spawned");
+            Logger.Log("Zombie Spawned");
             Instantiate(zombie, GenerateSpawnCoordinates(), Quaternion.identity);
             yield return new WaitForSeconds(time);
         }
@@ -38,7 +38,8 @@ public class EnemySpawner : MonoBehaviour
     {
         float angle = Random.Range(0f, Mathf.PI*2);
         float x = Mathf.Cos(angle) * spawn_radius;
-        float y = 0.0004f;
+        //float y = 0.0004f;
+        float y = 0f;
         float z = Mathf.Sin(angle) * spawn_radius;
 
 
