@@ -38,9 +38,10 @@ public class EnemySpawner : MonoBehaviour
     {
         float angle = Random.Range(0f, Mathf.PI*2);
         float x = Mathf.Cos(angle) * spawn_radius;
-        float y = Mathf.Sin(angle) * spawn_radius;
+        float y = 0.0004f;
+        float z = Mathf.Sin(angle) * spawn_radius;
 
 
-        return new Vector3(x, 0, y);    // y = 0?
+        return new Vector3(x, y, z);    // y = 0?
     }
 }

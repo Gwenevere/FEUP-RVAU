@@ -14,24 +14,22 @@ public class ZombieController : MonoBehaviour
     {
         target = GameObject.Find("Base");
         agent.Warp(gameObject.transform.position);
-        Debug.Log(gameObject.transform.position);
-        Debug.Log(this.agent.transform.position);
     }
 
     // Update is called once per frame
     void Update()
     {
-        int threshold = 15;
+        int threshold = 0;
 
-        Debug.Log(Vector3.Distance(this.transform.position, destination));
+        Logger.Log(Vector3.Distance(this.transform.position, destination));
 
-        if (walking && Vector3.Distance(this.transform.position, destination) <= threshold)
-        {
-            Debug.Log("---------------HERE!-----------------");
-            StopMoving();
-            // rb.angularVelocity =    ;
-            // agent.velocity = Vector3.zero;
-        }
+        //if (walking && Vector3.Distance(this.transform.position, destination) <= threshold)
+        //{
+        //    Debug.Log("---------------HERE!-----------------");
+        //    StopMoving();
+        //    // rb.angularVelocity =    ;
+        //    // agent.velocity = Vector3.zero;
+        //}
         
 
       //  if (Input.GetMouseButtonDown(0))
