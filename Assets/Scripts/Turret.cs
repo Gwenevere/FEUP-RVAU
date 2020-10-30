@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class Turret : MonoBehaviour
 {
-    public GameObject target;
+    private GameObject target;
     public int health = 200;
-    public float fireRate = 4f;
+    public float radius;
+    public float fireRate = 1f;
     public float level = 1;
     public GameObject bullet;
-    private float shoottimer = 0;
+    private float shoot_timer = 0;
     public Transform firePoint;
     private Vector3 dir;
     private bool shooting = false;
@@ -23,6 +24,7 @@ public class Turret : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        target = FindClosestEnemy();
         Shoot();
         CheckHealth();
         RotateToTarget();
@@ -47,11 +49,12 @@ public class Turret : MonoBehaviour
     {
         if(shooting && target != null)
         {
-            shoottimer += Time.deltaTime;
-            if(shoottimer > 1/fireRate){
+            shoot_timer += Time.deltaTime;
+            if(shoot_timer > 1/fireRate){
                 //Debug.Log("Shoot");
-                Instantiate(bullet, firePoint.position, firePoint.rotation);
-                shoottimer = 0;
+                GameObject new_bullet = Instantiate(bullet, firePoint.position, firePoint.rotation);
+                new_bullet.GetComponent<Bullet>().SetTarget(target);
+                shoot_timer = 0;
             }
         }
     }
@@ -63,9 +66,36 @@ public class Turret : MonoBehaviour
             dir = target.transform.position - transform.position;
             Quaternion lookDir = Quaternion.LookRotation(dir);
             Vector3 rotation = Quaternion.Lerp(transform.rotation, lookDir, Time.deltaTime).eulerAngles;
-            transform.rotation = Quaternion.Euler(0, rotation.y, 0);
+            transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
         }
         
+    }
+    GameObject FindClosestEnemy() {
+        GameObject[] gos;
+        gos = GameObject.FindGameObjectsWithTag("Zombie");
+        GameObject closest = null;
+        float distance = Mathf.Infinity;
+        Vector3 position = transform.position;
+        foreach (GameObject go in gos) {
+            Vector3 diff = go.transform.position - position;
+            float curDistance = diff.sqrMagnitude;
+            if (curDistance < radius && curDistance < distance) {
+                closest = go;
+                distance = curDistance;
+            //    targetLocation = closest.GetComponent<Vector3> ();
+ 
+        //        Vector3 targetLocation = closest.transform.position;
+ 
+            }
+        }
+        if(closest != null)
+        {
+            shooting = true;
+        }
+        return closest;
+        //targetLocation = closest.GetComponent<Vector3> ();
+ 
+        //Vector3 targetLocation = closest.GetComponent<Vector3> ();
     }
     
 }

@@ -19,9 +19,13 @@ public class Tower : MonoBehaviour
     {
     }
 
-    void TakeDamage(int damage)
+    public void TakeDamage(int damage)
     {
         health -= damage;
         healthBar.SetHealth(health);    
+        if(health <= 0)
+        {
+            GameController.Instance.LoseGame();
+        }
     }
 }

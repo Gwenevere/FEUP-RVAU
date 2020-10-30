@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GeneralUIManager : MonoBehaviour {
     public GameObject playUI;
-    public GameObject settingsMenu;
+    public GameObject timerLabel;
+    Text timerText;
     public GameObject visualizationTab;
     public GameObject addMenu;
     public GameObject navigationButton;
@@ -12,6 +14,7 @@ public class GeneralUIManager : MonoBehaviour {
 
     void Start()
     {
+        timerText = timerLabel.GetComponent<Text>();
         TogglePlayUI();
     }
 
@@ -21,12 +24,16 @@ public class GeneralUIManager : MonoBehaviour {
     }
 
     public void ToggleConnectionMenu() {
-        settingsMenu.SetActive(false);
         connectionMenu.SetActive(true);
     }
 
     public void ToggleOffMenus()
     {
         playUI.SetActive(false);
+    }
+
+    public void SetTime(string timerec)
+    {
+        timerText.text = timerec;
     }
 }
