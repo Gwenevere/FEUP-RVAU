@@ -7,7 +7,7 @@ public class GeneralUIManager : MonoBehaviour {
     public GameObject playUI;
     public GameObject timerLabel;
     Text timerText;
-    public GameObject visualizationTab;
+    public GameObject MenuUI;
     public GameObject addMenu;
     public GameObject navigationButton;
     public GameObject connectionMenu;
@@ -15,12 +15,24 @@ public class GeneralUIManager : MonoBehaviour {
     void Start()
     {
         timerText = timerLabel.GetComponent<Text>();
-        TogglePlayUI();
+        ToggleMenuUI();
     }
 
     public void TogglePlayUI()
     {
+        ToggleOffMenus();
         playUI.SetActive(true);
+    }
+
+    public void StartGame()
+    {
+        TogglePlayUI();
+    }
+
+    public void ToggleMenuUI()
+    {
+        ToggleOffMenus();
+        MenuUI.SetActive(true);
     }
 
     public void ToggleConnectionMenu() {
@@ -29,6 +41,7 @@ public class GeneralUIManager : MonoBehaviour {
 
     public void ToggleOffMenus()
     {
+        MenuUI.SetActive(false);
         playUI.SetActive(false);
     }
 

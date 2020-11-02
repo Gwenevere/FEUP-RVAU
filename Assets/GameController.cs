@@ -35,7 +35,7 @@ public class GameController : MonoBehaviour
         GUI = GameObject.Find("GUI");
         enemy_spawner = enemy_controller.GetComponent<EnemySpawner>();
         UImanager = GUI.GetComponent<GeneralUIManager>();
-        StartGame();
+        //StartGame();
     }
 
     // Update is called once per frame
@@ -50,6 +50,8 @@ public class GameController : MonoBehaviour
 
     public void StartGame()
     {
+        Logger.Log("Base position");
+        Logger.Log(GameObject.Find("Base").transform.position);
         playing = true;
         enemy_spawner.StartWave();
     }

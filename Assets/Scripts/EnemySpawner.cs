@@ -6,6 +6,7 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     public ZombieController zombie;
+    public GameObject imageTarget;
     public float spawn_radius;
     GameObject[] zombies;
     int num_zombies;
@@ -53,7 +54,8 @@ public class EnemySpawner : MonoBehaviour
         {
             num_zombies++;
             Debug.Log("Zombie Spawned");
-            Instantiate(zombie, GenerateSpawnCoordinates(), Quaternion.identity);
+            var newZombie = Instantiate(zombie, GenerateSpawnCoordinates(), Quaternion.identity);
+            newZombie.transform.parent = imageTarget.transform;
             yield return new WaitForSeconds(time);
         }
     }
