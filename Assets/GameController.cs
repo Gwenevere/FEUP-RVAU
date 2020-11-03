@@ -28,6 +28,8 @@ public class GameController : MonoBehaviour
     public int current_wave = 1;
     [HideInInspector]
     public bool playing = false;
+    [HideInInspector]
+    public bool basePlaced = false; // Game starts only if base image target was detected
 
     // Start is called before the first frame update
     void Start()
@@ -50,10 +52,16 @@ public class GameController : MonoBehaviour
 
     public void StartGame()
     {
-        Logger.Log("Base position");
-        Logger.Log(GameObject.Find("Base").transform.position);
-        playing = true;
-        enemy_spawner.StartWave();
+        if(basePlaced)
+        {
+            UImanager.TogglePlayUI();
+            Logger.Log("Base position");
+            Logger.Log(GameObject.Find("Base").transform.position);
+            playing = true;
+            enemy_spawner.StartWave();
+        } else {
+            UImanager.NoBaseWarning();
+        }
     }
 
     public void LoseGame()

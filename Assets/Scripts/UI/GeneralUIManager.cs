@@ -8,12 +8,15 @@ public class GeneralUIManager : MonoBehaviour {
     public GameObject timerLabel;
     Text timerText;
     public GameObject MenuUI;
+    private MenuUI Menu;
     public GameObject addMenu;
     public GameObject navigationButton;
     public GameObject connectionMenu;
 
     void Start()
     {
+        Menu = MenuUI.GetComponent<MenuUI>();
+        
         timerText = timerLabel.GetComponent<Text>();
         ToggleMenuUI();
     }
@@ -22,11 +25,6 @@ public class GeneralUIManager : MonoBehaviour {
     {
         ToggleOffMenus();
         playUI.SetActive(true);
-    }
-
-    public void StartGame()
-    {
-        TogglePlayUI();
     }
 
     public void ToggleMenuUI()
@@ -48,5 +46,10 @@ public class GeneralUIManager : MonoBehaviour {
     public void SetTime(string timerec)
     {
         timerText.text = timerec;
+    }
+
+    public void NoBaseWarning()
+    {
+        Menu.NoBaseWarning();
     }
 }
