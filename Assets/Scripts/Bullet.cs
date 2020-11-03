@@ -30,6 +30,10 @@ public class Bullet : MonoBehaviour
             dir = target.transform.position - transform.position;
             transform.Translate(dir.normalized * speed * Time.deltaTime, Space.World);
         }
+        else
+        {
+            GameObject.Destroy(gameObject);
+        }
 
     }
 

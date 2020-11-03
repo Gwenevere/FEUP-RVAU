@@ -14,6 +14,7 @@ public class ZombieController : MonoBehaviour
 
     private void Start()
     {
+        Logger.Log("Zombie Spawned");
         damage = 20;
         animator = gameObject.GetComponent<Animator>();
         target = GameObject.Find("Base");
