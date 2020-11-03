@@ -29,11 +29,14 @@ public class GameController : MonoBehaviour
     [HideInInspector]
     public bool playing = false;
     [HideInInspector]
-    public bool basePlaced = false; // Game starts only if base image target was detected
+    private bool basePlaced; // Game starts only if base image target was detected
+    public int numTurrets = 1;
+    public int money = 0;
 
     // Start is called before the first frame update
     void Start()
     {
+        basePlaced = true;      // eliminar
         GUI = GameObject.Find("GUI");
         enemy_spawner = enemy_controller.GetComponent<EnemySpawner>();
         UImanager = GUI.GetComponent<GeneralUIManager>();
@@ -52,6 +55,7 @@ public class GameController : MonoBehaviour
 
     public void StartGame()
     {
+        Debug.Log(basePlaced);
         if(basePlaced)
         {
             UImanager.TogglePlayUI();

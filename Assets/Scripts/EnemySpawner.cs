@@ -33,7 +33,7 @@ public class EnemySpawner : MonoBehaviour
     public void StartWave()
     {
         float time_between = Random.Range(2,6);
-        Debug.Log("Started wave with " + num_wave_zombies);
+        Logger.Log("Started wave with " + num_wave_zombies);
         currentCoroutine = StartCoroutine(SpawnZombies(time_between));
     }
 
@@ -53,9 +53,18 @@ public class EnemySpawner : MonoBehaviour
         while(true)
         {
             num_zombies++;
-            Debug.Log("Zombie Spawned");
+            Logger.Log("Zombie Spawned");
             var newZombie = Instantiate(zombie, GenerateSpawnCoordinates(), Quaternion.identity);
             newZombie.transform.parent = imageTarget.transform;
+            //  Change zombie according to wave number
+            if(GameController.Instance.current_wave < 3)
+            {
+                var r = Random.Range(1,6);
+                if(r == 1)
+                {
+                    newZombie.Constructor(100, 40, 200);
+                }
+            }
             yield return new WaitForSeconds(time);
         }
     }

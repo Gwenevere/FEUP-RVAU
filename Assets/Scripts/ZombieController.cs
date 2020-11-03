@@ -6,20 +6,28 @@ public class ZombieController : MonoBehaviour
     public NavMeshAgent agent;
     private GameObject target;
     private Vector3 destination;
-    public int health = 20;
+    public int health;
     private bool walking = false;
     private bool isAttacking = false;
     private Animator animator;
-    private int damage;
+    private int damage = 20;
+    private int value = 50;
 
     private void Start()
     {
         Logger.Log("Zombie Spawned");
-        damage = 20;
         animator = gameObject.GetComponent<Animator>();
         target = GameObject.Find("Base");
         //agent.Warp(gameObject.transform.position);
         StartMoving();
+    }
+
+    public void Constructor(int n_value, int n_damage, int n_health)
+    {
+        value = n_value;
+        damage = n_damage;
+        health = n_health;
+        gameObject.transform.localScale = new Vector3(0.08f, 0.07f, 0.08f);
     }
 
     // Update is called once per frame
@@ -98,6 +106,7 @@ public class ZombieController : MonoBehaviour
 
     private void Die()
     {
+        GameController.Instance.money += value;
         Destroy(gameObject);
     }
     
