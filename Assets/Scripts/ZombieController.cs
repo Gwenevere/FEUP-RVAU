@@ -6,7 +6,7 @@ public class ZombieController : MonoBehaviour
     public NavMeshAgent agent;
     private GameObject target;
     private Vector3 destination;
-    public int zombiesKilled = 0;
+    GameController gameController;
     public int health;
     private bool walking = false;
     private bool isAttacking = false;
@@ -108,7 +108,7 @@ public class ZombieController : MonoBehaviour
     private void Die()
     {
         GameController.Instance.money += value;
-        zombiesKilled++;
+        gameController.zombiesKilled++;
         Destroy(gameObject);
     }
     

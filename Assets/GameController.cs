@@ -20,6 +20,7 @@ public class GameController : MonoBehaviour
 
     public GameObject enemy_controller;
     private EnemySpawner enemy_spawner;
+    public int zombiesKilled;
     GameObject GUI;
     GeneralUIManager UImanager;
     [HideInInspector]
@@ -62,6 +63,7 @@ public class GameController : MonoBehaviour
             Logger.Log("Base position");
             Logger.Log(GameObject.Find("Base").transform.position);
             playing = true;
+            zombiesKilled = 0;
             enemy_spawner.StartWave();
         } else {
             UImanager.NoBaseWarning();
@@ -98,4 +100,9 @@ public class GameController : MonoBehaviour
         UImanager.SetTime(string.Format ("{0:00} : {1:00}", minutes, seconds));
         //timerLabel.GetComponent<Text>() = string.Format ("{0:00} : {1:00}", minutes, seconds);
      }
+
+    void UpdateUIZombiesKilled()
+    {
+        UImanager.SetNumberKills(zombiesKilled.ToString());
+    }
 }
