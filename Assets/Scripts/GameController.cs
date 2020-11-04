@@ -20,7 +20,9 @@ public class GameController : MonoBehaviour
 
     public GameObject enemy_controller;
     private EnemySpawner enemy_spawner;
+    public GameObject baseObject;
     public int zombiesKilled;
+
     GameObject GUI;
     GeneralUIManager UImanager;
     [HideInInspector]
@@ -41,6 +43,7 @@ public class GameController : MonoBehaviour
         GUI = GameObject.Find("GUI");
         enemy_spawner = enemy_controller.GetComponent<EnemySpawner>();
         UImanager = GUI.GetComponent<GeneralUIManager>();
+        enemy_spawner = enemy_controller.GetComponent<EnemySpawner>();
         //StartGame();
     }
 
@@ -70,13 +73,30 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public void ResetGame()
+    {
+        Base baseScript = baseObject.GetComponent<Base>();
+
+        baseScript.ResetHealth();
+        enemy_spawner.ResetSpawner();
+    }
+
+    public void Restart()
+    {
+        ResetGame();
+
+        StartGame();
+    }
+
+
     public void LoseGame()
     {
         enemy_spawner.StopWave();
         playing = false;
         Logger.Log("GAME OVER");
         UImanager.ToggleGameOverUI();
-        
+
+        ResetGame();
     }
 
     public void NextWave()

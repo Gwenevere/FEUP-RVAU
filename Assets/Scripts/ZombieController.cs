@@ -29,7 +29,9 @@ public class ZombieController : MonoBehaviour
         damage = n_damage;
         health = n_health;
         gameObject.transform.localScale = new Vector3(0.08f, 0.07f, 0.08f);
+        
     }
+
 
     // Update is called once per frame
     void Update()
@@ -58,7 +60,7 @@ public class ZombieController : MonoBehaviour
             }*/
            
 
-            agent.SetDestination(destination);
+            //agent.SetDestination(destination);
 
        // }
     }
@@ -93,7 +95,7 @@ public class ZombieController : MonoBehaviour
 
     public void DoDamage()
     {
-        target.GetComponent<Tower>().TakeDamage(damage);
+        target.GetComponent<Base>().TakeDamage(damage);
     }
 
     public void TakeDamage(int damage)
@@ -114,7 +116,7 @@ public class ZombieController : MonoBehaviour
     
     void StartMoving()
     {
-        agent.Move(destination);
+        agent.SetDestination(destination);
         agent.isStopped = false;
         walking = true;
 

@@ -8,7 +8,7 @@ public class EnemySpawner : MonoBehaviour
     public ZombieController zombie;
     public GameObject imageTarget;
     public float spawn_radius;
-    GameObject[] zombies;
+    List<ZombieController> zombies;
     int num_zombies;
     int num_wave_zombies;
     int num_courotine = 1;
@@ -17,6 +17,7 @@ public class EnemySpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        zombies = new List<ZombieController>();
     }
 
     // Update is called once per frame
@@ -37,14 +38,25 @@ public class EnemySpawner : MonoBehaviour
         currentCoroutine = StartCoroutine(SpawnZombies(time_between));
     }
 
-    public void StopWave()
+    public void ResetSpawner()
     {
-        StopCoroutine(currentCoroutine);
+        if (currentCoroutine != null)
+        {
+            StopCoroutine(currentCoroutine);
+        }
+
         foreach (GameObject zombie in GameObject.FindGameObjectsWithTag("Zombie"))
         {
             num_zombies--;
             GameObject.Destroy(zombie);
         }
+
+        zombies.Clear();
+    }
+
+    public void StopWave()
+    {
+        ResetSpawner();
         GameController.Instance.NextWave();
     }
 
@@ -52,8 +64,6 @@ public class EnemySpawner : MonoBehaviour
     {
         while(true)
         {
-            num_zombies++;
-            Logger.Log("Zombie Spawned");
             var newZombie = Instantiate(zombie, GenerateSpawnCoordinates(), Quaternion.identity);
             newZombie.transform.parent = imageTarget.transform;
             //  Change zombie according to wave number
@@ -65,6 +75,11 @@ public class EnemySpawner : MonoBehaviour
                     newZombie.Constructor(100, 40, 200);
                 }
             }
+
+            zombies.Add(newZombie);
+            num_zombies++;
+            Logger.Log("Zombie Spawned");
+
             yield return new WaitForSeconds(time);
         }
     }
