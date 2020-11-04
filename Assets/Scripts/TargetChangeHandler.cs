@@ -25,41 +25,31 @@ public class TargetChangeHandler : MonoBehaviour
         }
     }
 
-    public void ImageTargetFoundHandler()
+    public void ImageTargetFoundHandler(string name)
     {
         if(debug_active)
         {
-            if(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject != null)
-            {
-                Logger.Log("Image target - " + UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name + " - was FOUND.");
-            }
+            Logger.Log("Image target - " + name + " - was FOUND.");
         }
 
-        if(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject != null)
+        if(name == "Base")
         {
-            if(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name == "Base")
-            {
-                GameController.Instance.basePlaced = true;
-            }
+            GameController.Instance.basePlaced = true;
         }
+        
     }
 
-    public void ImageTargetLostHandler()
+    public void ImageTargetLostHandler(string name)
     {
-        if(debug_active)
+        if (debug_active)
         {
-            if(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject != null)
-            {
-                Logger.Log("Image target - " + UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name + " - was LOST.");
-            }
+            Logger.Log("Image target - " + name + " - was LOST.");
         }
-
-        if(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject != null)
+        
+        if(name == "Base")
         {
-            if(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name == "Base")
-            {
-                GameController.Instance.basePlaced = false;
-            }
+            GameController.Instance.basePlaced = false;
         }
+        
     }
 }

@@ -16,10 +16,12 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public bool debugging;
+
     public GameObject enemy_controller;
     private EnemySpawner enemy_spawner;
     public GameObject baseObject;
-    public int zombiesKilled;
+    public int zombiesKilled = 0;
 
     GameObject GUI;
     GeneralUIManager UImanager;
@@ -52,21 +54,19 @@ public class GameController : MonoBehaviour
         if(playing)
         {
             UpdateUITimer();
-            UpdateUIZombiesKilled();
-
+            
         }
     }
 
     public void StartGame()
     {
         Debug.Log(basePlaced);
-        if(basePlaced)
+        if(basePlaced || debugging)
         {
             UImanager.TogglePlayUI();
             Logger.Log("Base position");
             Logger.Log(GameObject.Find("Base").transform.position);
             playing = true;
-            zombiesKilled = 0;
             enemy_spawner.StartWave();
         } else {
             UImanager.NoBaseWarning();
@@ -123,11 +123,6 @@ public class GameController : MonoBehaviour
         //timerLabel.GetComponent<Text>() = string.Format ("{0:00} : {1:00}", minutes, seconds);
      }
 
-    void UpdateUIZombiesKilled()
-    {
-        UImanager.SetNumberKills(zombiesKilled.ToString());
-    }
-
     public void Resume()
     {
         UImanager.DisablePauseUI();
@@ -140,5 +135,11 @@ public class GameController : MonoBehaviour
     {
         UImanager.TogglePauseUI();
         Time.timeScale = 0f;
+    }
+
+    public void ZombieKilled()
+    {
+        zombiesKilled++;
+        UImanager.SetNumberKills(zombiesKilled.ToString());
     }
 }

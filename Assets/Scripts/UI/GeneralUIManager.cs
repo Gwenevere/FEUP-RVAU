@@ -20,8 +20,9 @@ public class GeneralUIManager : MonoBehaviour {
         Menu = MenuUI.GetComponent<MenuUI>();
         
         timerText = timerLabel.GetComponent<Text>();
-        ToggleMenuUI();
         numberKillsText = numberKillsLabel.GetComponent<Text>();
+        ToggleMenuUI();
+        
     }
 
     public void TogglePlayUI()
@@ -73,6 +74,9 @@ public class GeneralUIManager : MonoBehaviour {
 
     public void SetNumberKills(string killsnumber)
     {
+        Debug.Log("zombeis killed");
+        Debug.Log(killsnumber);
+        Debug.Log(numberKillsText.name);
         numberKillsText.text = killsnumber;
     }
 
