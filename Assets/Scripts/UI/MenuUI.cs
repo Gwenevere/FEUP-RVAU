@@ -1,24 +1,18 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MenuUI : MonoBehaviour
 {
-    public Button startButton;
     public GameObject warningText;
     private GameObject nextText;
     private Coroutine fadeCoroutine;
     
     // Start is called before the first frame update
-    void Start()
-    {
-    }
+    void Start() {}
 
     // Update is called once per frame
-    void Update()
-    {
-    }
+    void Update() {}
 
     public void NoBaseWarning()
     {
@@ -50,5 +44,4 @@ public class MenuUI : MonoBehaviour
             GameObject.Destroy(nextText);
         }
     }
-
 }

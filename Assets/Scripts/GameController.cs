@@ -24,7 +24,7 @@ public class GameController : MonoBehaviour
     public int zombiesKilled = 0;
 
     GameObject GUI;
-    GeneralUIManager UImanager;
+    GeneralUIManager UImanager; 
     [HideInInspector]
     public float gameTimer = 0;
     [HideInInspector]
@@ -53,8 +53,7 @@ public class GameController : MonoBehaviour
         gameTimer += Time.deltaTime;
         if(playing)
         {
-            UpdateUITimer();
-            
+            UpdateUITimer();   
         }
     }
 
@@ -89,7 +88,6 @@ public class GameController : MonoBehaviour
     public void Restart()
     {
         ResetGame();
-
         StartGame();
     }
 
@@ -115,6 +113,8 @@ public class GameController : MonoBehaviour
         //  Shop?
         enemy_spawner.StartWave();
         Debug.Log("Wave " + current_wave +" started");
+        UImanager.SetNextLevel(current_wave.ToString());
+        UImanager.NextLevelWarning();
     }
      void UpdateUITimer() {
  
@@ -145,4 +145,5 @@ public class GameController : MonoBehaviour
         zombiesKilled++;
         UImanager.SetNumberKills(zombiesKilled.ToString());
     }
+
 }
