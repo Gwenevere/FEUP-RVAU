@@ -8,8 +8,10 @@ public class EnemySpawner : MonoBehaviour
     public ZombieController zombie;
     public GameObject imageTarget;
     public float spawn_radius;
-    List<ZombieController> zombies;
-    int num_zombies;
+    public List<ZombieController> zombies;
+    [HideInInspector]
+    public int num_zombies;
+    int num_zombies_spawned = 0;
     int num_wave_zombies;
     int num_courotine = 1;
     private Coroutine currentCoroutine;
@@ -24,8 +26,7 @@ public class EnemySpawner : MonoBehaviour
     void Update()
     {
         num_wave_zombies = GameController.Instance.current_wave * 5;
-        //Debug.Log(GameController.Instance.current_wave);
-        if(num_zombies > num_wave_zombies)
+        if(num_zombies_spawned > num_wave_zombies)
         {
             StopCoroutine(currentCoroutine);
         }
@@ -33,7 +34,7 @@ public class EnemySpawner : MonoBehaviour
 
     public void StartWave()
     {
-        float time_between = Random.Range(2,6);
+        float time_between = Random.Range(2,3);
         Logger.Log("Started wave with " + num_wave_zombies);
         currentCoroutine = StartCoroutine(SpawnZombies(time_between));
     }
@@ -47,10 +48,11 @@ public class EnemySpawner : MonoBehaviour
 
         foreach (GameObject zombie in GameObject.FindGameObjectsWithTag("Zombie"))
         {
-            num_zombies--;
             GameObject.Destroy(zombie);
         }
 
+        num_zombies_spawned = 0;
+        num_zombies = 0;
         zombies.Clear();
     }
 
@@ -78,7 +80,12 @@ public class EnemySpawner : MonoBehaviour
 
             zombies.Add(newZombie);
             num_zombies++;
-            Logger.Log("Zombie Spawned");
+            num_zombies_spawned++;
+
+            Logger.Log("num_zombies");
+            Logger.Log(num_zombies);
+            Logger.Log("num_zombies_spawned");
+            Logger.Log(num_zombies_spawned);
 
             yield return new WaitForSeconds(time);
         }

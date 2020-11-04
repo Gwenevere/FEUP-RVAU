@@ -12,10 +12,11 @@ public class ZombieController : MonoBehaviour
     private Animator animator;
     private int damage = 20;
     private int value = 50;
+    EnemySpawner enemySpawner;
 
     private void Start()
     {
-        Logger.Log("Zombie Spawned");
+        enemySpawner = GameObject.Find("EnemyController").GetComponent<EnemySpawner>();
         animator = gameObject.GetComponent<Animator>();
         target = GameObject.Find("Base");
         //agent.Warp(gameObject.transform.position);
@@ -66,14 +67,12 @@ public class ZombieController : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("colission enter zombie");
 
     }
 
 
     void OnTriggerEnter(Collider collider)
     {
-        Debug.Log("trigger  enter zombie");
         //Check for a match with the specified name on any GameObject that collides with your GameObject
         if (collider.gameObject.name == "Base")
         {
@@ -108,6 +107,14 @@ public class ZombieController : MonoBehaviour
 
     private void Die()
     {
+        enemySpawner.num_zombies--;
+        Logger.Log("num_zombies");
+        Logger.Log(enemySpawner.num_zombies);
+        if(enemySpawner.num_zombies <= 0)
+        {
+            enemySpawner.StopWave();
+        }
+        enemySpawner.zombies.Remove(this);
         GameController.Instance.money += value;
         GameController.Instance.ZombieKilled();
         Destroy(gameObject);

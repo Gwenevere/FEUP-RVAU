@@ -80,7 +80,9 @@ public class GameController : MonoBehaviour
         baseScript.ResetHealth();
         enemy_spawner.ResetSpawner();
         gameTimer = 0;
-
+        current_wave = 0;
+        zombiesKilled = 0;
+        UImanager.SetNumberKills(0.ToString());
 
     }
 

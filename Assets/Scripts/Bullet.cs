@@ -39,11 +39,8 @@ public class Bullet : MonoBehaviour
 
     void OnTriggerEnter(Collider collider)
     {
-        Debug.Log("trigger enter bullet");
-        Debug.Log(collider.gameObject.name);
         if (collider.gameObject.tag == "Zombie")
         {
-            Debug.Log("Bullet collided");
             Destroy(gameObject);
             // zombiecontroller ou outros se houver mais inimigos
             target.GetComponent<ZombieController>().TakeDamage(damage);
