@@ -32,7 +32,7 @@ public class GameController : MonoBehaviour
     private bool basePlaced; // Game starts only if base image target was detected
     public int numTurrets = 1;
     public int money = 0;
-
+   
     // Start is called before the first frame update
     void Start()
     {
@@ -72,6 +72,9 @@ public class GameController : MonoBehaviour
     {
         enemy_spawner.StopWave();
         playing = false;
+        Logger.Log("GAME OVER");
+        UImanager.ToggleGameOverUI();
+        
     }
 
     public void NextWave()

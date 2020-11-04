@@ -8,6 +8,7 @@ public class GeneralUIManager : MonoBehaviour {
     public GameObject timerLabel;
     Text timerText;
     public GameObject MenuUI;
+    public GameObject gameOverUI;
     private MenuUI Menu;
     public GameObject addMenu;
     public GameObject navigationButton;
@@ -27,6 +28,13 @@ public class GeneralUIManager : MonoBehaviour {
         playUI.SetActive(true);
     }
 
+    public void ToggleGameOverUI()
+    {
+        ToggleOffMenus();
+        gameOverUI.SetActive(true);
+        
+    }
+
     public void ToggleMenuUI()
     {
         ToggleOffMenus();
@@ -41,11 +49,17 @@ public class GeneralUIManager : MonoBehaviour {
     {
         MenuUI.SetActive(false);
         playUI.SetActive(false);
+        gameOverUI.SetActive(false);
     }
 
     public void SetTime(string timerec)
     {
         timerText.text = timerec;
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
     }
 
     public void NoBaseWarning()
