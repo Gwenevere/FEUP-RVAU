@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
@@ -35,7 +33,7 @@ public class GameController : MonoBehaviour
     public bool basePlaced; // Game starts only if base image target was detected
     public int numTurrets = 1;
     public int money = 0;
-   
+  
     // Start is called before the first frame update
     void Start()
     {
@@ -54,6 +52,8 @@ public class GameController : MonoBehaviour
         if(playing)
         {
             UpdateUITimer();
+            UpdateUIZombiesKilled();
+
         }
     }
 
@@ -126,5 +126,19 @@ public class GameController : MonoBehaviour
     void UpdateUIZombiesKilled()
     {
         UImanager.SetNumberKills(zombiesKilled.ToString());
+    }
+
+    public void Resume()
+    {
+        UImanager.DisablePauseUI();
+        Time.timeScale = 1f;
+        UImanager.TogglePlayUI();
+    }
+
+  
+    public void Paused()
+    {
+        UImanager.TogglePauseUI();
+        Time.timeScale = 0f;
     }
 }

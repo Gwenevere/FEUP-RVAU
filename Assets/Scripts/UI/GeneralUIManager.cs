@@ -9,18 +9,19 @@ public class GeneralUIManager : MonoBehaviour {
     Text timerText;
     public GameObject MenuUI;
     public GameObject gameOverUI;
+    public GameObject pauseUI;
     private MenuUI Menu;
     public GameObject addMenu;
     public GameObject navigationButton;
     public GameObject connectionMenu;
-
+   
     void Start()
     {
         Menu = MenuUI.GetComponent<MenuUI>();
         
         timerText = timerLabel.GetComponent<Text>();
-        numberKillsText = numberKillsLabel.GetComponent<Text>();
         ToggleMenuUI();
+        numberKillsText = numberKillsLabel.GetComponent<Text>();
     }
 
     public void TogglePlayUI()
@@ -42,6 +43,17 @@ public class GeneralUIManager : MonoBehaviour {
         MenuUI.SetActive(true);
     }
 
+    public void TogglePauseUI()
+    {
+        ToggleOffMenus();
+        pauseUI.SetActive(true);
+    }
+
+    public void DisablePauseUI()
+    { 
+        pauseUI.SetActive(false);
+    }
+
     public void ToggleConnectionMenu() {
         connectionMenu.SetActive(true);
     }
@@ -51,6 +63,7 @@ public class GeneralUIManager : MonoBehaviour {
         MenuUI.SetActive(false);
         playUI.SetActive(false);
         gameOverUI.SetActive(false);
+        pauseUI.SetActive(false);
     }
 
     public void SetTime(string timerec)
