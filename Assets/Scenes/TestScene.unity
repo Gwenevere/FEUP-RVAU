@@ -878,7 +878,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1416993736}
         m_TargetAssemblyTypeName: GameController, Assembly-CSharp
-        m_MethodName: ResetGame
+        m_MethodName: Restart
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1329,6 +1329,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playUI: {fileID: 313463814}
   timerLabel: {fileID: 1353217700}
+  numberKillsLabel: {fileID: 0}
   MenuUI: {fileID: 1351914185}
   gameOverUI: {fileID: 2141191596}
   addMenu: {fileID: 0}
@@ -2169,6 +2170,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemy_controller: {fileID: 1199900010}
   baseObject: {fileID: 2083999060}
+  zombiesKilled: 0
   gameTimer: 0
   current_wave: 1
   playing: 0

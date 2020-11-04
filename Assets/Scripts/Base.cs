@@ -34,7 +34,8 @@ public class Base : MonoBehaviour
     public void TakeDamage(int damage)
     {
         health -= damage;
-        healthBar.SetHealth(health);    
+        healthBar.SetHealth(health);
+        
         if(health <= 0)
         {
             GameController.Instance.LoseGame();
