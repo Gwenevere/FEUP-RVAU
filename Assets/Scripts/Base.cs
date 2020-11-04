@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Tower : MonoBehaviour
+public class Base : MonoBehaviour
 {
     public int health = 1000;
     public int max_health = 1000;
@@ -19,10 +19,23 @@ public class Tower : MonoBehaviour
     {
     }
 
+    public void SetHealth(int newAmount)
+    {
+        health = newAmount;
+
+        healthBar.SetHealth(health);
+    }
+
+    public void ResetHealth()
+    {
+        SetHealth(max_health);
+    }
+
     public void TakeDamage(int damage)
     {
         health -= damage;
-        healthBar.SetHealth(health);    
+        healthBar.SetHealth(health);
+        
         if(health <= 0)
         {
             GameController.Instance.LoseGame();

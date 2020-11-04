@@ -1,11 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class GeneralUIManager : MonoBehaviour {
     public GameObject playUI;
     public GameObject timerLabel;
+    public GameObject numberKillsLabel;
+    Text numberKillsText;
     Text timerText;
     public GameObject MenuUI;
     public GameObject gameOverUI;
@@ -19,6 +19,7 @@ public class GeneralUIManager : MonoBehaviour {
         Menu = MenuUI.GetComponent<MenuUI>();
         
         timerText = timerLabel.GetComponent<Text>();
+        numberKillsText = numberKillsLabel.GetComponent<Text>();
         ToggleMenuUI();
     }
 
@@ -55,6 +56,11 @@ public class GeneralUIManager : MonoBehaviour {
     public void SetTime(string timerec)
     {
         timerText.text = timerec;
+    }
+
+    public void SetNumberKills(string killsnumber)
+    {
+        numberKillsText.text = killsnumber;
     }
 
     public void ExitGame()

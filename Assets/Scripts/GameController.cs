@@ -20,6 +20,9 @@ public class GameController : MonoBehaviour
 
     public GameObject enemy_controller;
     private EnemySpawner enemy_spawner;
+    public GameObject baseObject;
+    public int zombiesKilled;
+
     GameObject GUI;
     GeneralUIManager UImanager;
     [HideInInspector]
@@ -40,6 +43,7 @@ public class GameController : MonoBehaviour
         GUI = GameObject.Find("GUI");
         enemy_spawner = enemy_controller.GetComponent<EnemySpawner>();
         UImanager = GUI.GetComponent<GeneralUIManager>();
+        enemy_spawner = enemy_controller.GetComponent<EnemySpawner>();
         //StartGame();
     }
 
@@ -62,11 +66,30 @@ public class GameController : MonoBehaviour
             Logger.Log("Base position");
             Logger.Log(GameObject.Find("Base").transform.position);
             playing = true;
+            zombiesKilled = 0;
             enemy_spawner.StartWave();
         } else {
             UImanager.NoBaseWarning();
         }
     }
+
+    public void ResetGame()
+    {
+        Base baseScript = baseObject.GetComponent<Base>();
+
+        baseScript.ResetHealth();
+        enemy_spawner.ResetSpawner();
+
+
+    }
+
+    public void Restart()
+    {
+        ResetGame();
+
+        StartGame();
+    }
+
 
     public void LoseGame()
     {
@@ -74,7 +97,8 @@ public class GameController : MonoBehaviour
         playing = false;
         Logger.Log("GAME OVER");
         UImanager.ToggleGameOverUI();
-        
+
+        ResetGame();
     }
 
     public void NextWave()
@@ -98,4 +122,9 @@ public class GameController : MonoBehaviour
         UImanager.SetTime(string.Format ("{0:00} : {1:00}", minutes, seconds));
         //timerLabel.GetComponent<Text>() = string.Format ("{0:00} : {1:00}", minutes, seconds);
      }
+
+    void UpdateUIZombiesKilled()
+    {
+        UImanager.SetNumberKills(zombiesKilled.ToString());
+    }
 }

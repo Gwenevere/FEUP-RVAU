@@ -6,7 +6,7 @@ public class ZombieController : MonoBehaviour
     public NavMeshAgent agent;
     private GameObject target;
     private Vector3 destination;
-    public int zombiesKilled = 0;
+    GameController gameController;
     public int health;
     private bool walking = false;
     private bool isAttacking = false;
@@ -29,7 +29,9 @@ public class ZombieController : MonoBehaviour
         damage = n_damage;
         health = n_health;
         gameObject.transform.localScale = new Vector3(0.08f, 0.07f, 0.08f);
+        
     }
+
 
     // Update is called once per frame
     void Update()
@@ -58,7 +60,7 @@ public class ZombieController : MonoBehaviour
             }*/
            
 
-            agent.SetDestination(destination);
+            //agent.SetDestination(destination);
 
        // }
     }
@@ -93,7 +95,7 @@ public class ZombieController : MonoBehaviour
 
     public void DoDamage()
     {
-        target.GetComponent<Tower>().TakeDamage(damage);
+        target.GetComponent<Base>().TakeDamage(damage);
     }
 
     public void TakeDamage(int damage)
@@ -108,13 +110,13 @@ public class ZombieController : MonoBehaviour
     private void Die()
     {
         GameController.Instance.money += value;
-        zombiesKilled++;
+        gameController.zombiesKilled++;
         Destroy(gameObject);
     }
     
     void StartMoving()
     {
-        agent.Move(destination);
+        agent.SetDestination(destination);
         agent.isStopped = false;
         walking = true;
 
