@@ -8,19 +8,16 @@ public class MenuUI : MonoBehaviour
     public Button startButton;
     public GameObject warningText;
     private GameObject nextText;
-    private float warningTimer;
     private Coroutine fadeCoroutine;
     
     // Start is called before the first frame update
     void Start()
     {
-        warningTimer = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
-        warningTimer += Time.deltaTime;
     }
 
     public void NoBaseWarning()

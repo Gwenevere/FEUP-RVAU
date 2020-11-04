@@ -57,7 +57,7 @@ public class EnemySpawner : MonoBehaviour
             var newZombie = Instantiate(zombie, GenerateSpawnCoordinates(), Quaternion.identity);
             newZombie.transform.parent = imageTarget.transform;
             //  Change zombie according to wave number
-            if(GameController.Instance.current_wave < 3)
+            if(GameController.Instance.current_wave >= 3)
             {
                 var r = Random.Range(1,6);
                 if(r == 1)

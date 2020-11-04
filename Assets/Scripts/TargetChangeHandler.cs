@@ -21,15 +21,7 @@ public class TargetChangeHandler : MonoBehaviour
     {
         if(debug_active)
         {
-            Debug.Log(" Content placed");
-        }
-    }
-
-    public void PlaneFoundHandler()
-    {
-        if(debug_active)
-        {
-            Debug.Log("Plane was FOUND.");
+            Logger.Log(" Content placed");
         }
     }
 
@@ -37,15 +29,18 @@ public class TargetChangeHandler : MonoBehaviour
     {
         if(debug_active)
         {
-            Debug.Log("Image target was FOUND.");
+            if(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject != null)
+            {
+                Logger.Log("Image target - " + UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name + " - was FOUND.");
+            }
         }
-    }
 
-    public void PlaneLostHandler()
-    {
-        if(debug_active)
+        if(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject != null)
         {
-            Debug.Log("Plane was LOST.");
+            if(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name == "Base")
+            {
+                GameController.Instance.basePlaced = true;
+            }
         }
     }
 
@@ -53,7 +48,18 @@ public class TargetChangeHandler : MonoBehaviour
     {
         if(debug_active)
         {
-            Debug.Log("Image target was LOST.");
+            if(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject != null)
+            {
+                Logger.Log("Image target - " + UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name + " - was LOST.");
+            }
+        }
+
+        if(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject != null)
+        {
+            if(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name == "Base")
+            {
+                GameController.Instance.basePlaced = false;
+            }
         }
     }
 }
