@@ -79,6 +79,7 @@ public class GameController : MonoBehaviour
 
         baseScript.ResetHealth();
         enemy_spawner.ResetSpawner();
+        gameTimer = 0;
 
 
     }
