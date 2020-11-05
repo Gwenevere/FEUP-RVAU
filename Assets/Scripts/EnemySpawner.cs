@@ -34,6 +34,8 @@ public class EnemySpawner : MonoBehaviour
 
     public void StartWave()
     {
+        num_zombies_spawned = 0;
+        num_zombies = 0;
         float time_between = Random.Range(2,3);
         Logger.Log("Started wave with " + num_wave_zombies);
         currentCoroutine = StartCoroutine(SpawnZombies(time_between));

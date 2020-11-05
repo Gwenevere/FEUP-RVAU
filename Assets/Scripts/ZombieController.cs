@@ -10,7 +10,7 @@ public class ZombieController : MonoBehaviour
     private bool walking = false;
     private bool isAttacking = false;
     private Animator animator;
-    private int damage = 20;
+    private int damage = 10;
     private int value = 50;
     EnemySpawner enemySpawner;
 

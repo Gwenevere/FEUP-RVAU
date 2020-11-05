@@ -1747,7 +1747,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agent: {fileID: 6006}
-  health: 100
+  health: 70
 --- !u!195 &6006
 NavMeshAgent:
   m_ObjectHideFlags: 0

@@ -5,8 +5,8 @@ using System.Collections;
 public class GeneralUIManager : MonoBehaviour {
     Text numberKillsText;
     Text timerText;
-    Text levelNumberText;
-    private GameObject nextLevelButton;
+    public GameObject levelText;
+    private GameObject nextLevelText;
     private MenuUI Menu;
     public GameObject playUI;
     public GameObject timerLabel;
@@ -14,8 +14,6 @@ public class GeneralUIManager : MonoBehaviour {
     public GameObject MenuUI;
     public GameObject gameOverUI;
     public GameObject pauseUI;
-    public GameObject numberLevelLabel;
-    public GameObject NextLevel;
     public GameObject addMenu;
     public GameObject navigationButton;
     public GameObject connectionMenu;
@@ -28,7 +26,6 @@ public class GeneralUIManager : MonoBehaviour {
         
         timerText = timerLabel.GetComponent<Text>();
         numberKillsText = numberKillsLabel.GetComponent<Text>();
-        levelNumberText = numberLevelLabel.GetComponent<Text>();
         ToggleMenuUI();
   
     }
@@ -83,7 +80,7 @@ public class GeneralUIManager : MonoBehaviour {
 
     public void SetNextLevel(string nextlevel)
     {
-        levelNumberText.text = nextlevel;
+        levelText.GetComponent<Text>().text = "Level " + nextlevel;
     }
 
     public void SetNumberKills(string killsnumber)
@@ -97,28 +94,28 @@ public class GeneralUIManager : MonoBehaviour {
         {
             StopCoroutine(fadeCoroutine);
         }
-        if (nextLevelButton != null)
+        if (nextLevelText != null)
         {
-            GameObject.Destroy(nextLevelButton);
+            GameObject.Destroy(nextLevelText);
         }
-        nextButton = Instantiate(nextLevelButton, nextLevelButton.transform.position, Quaternion.identity);
-        nextButton.transform.SetParent(gameObject.transform);
-        nextButton.SetActive(true);
+        nextLevelText = Instantiate(levelText, levelText.transform.position, Quaternion.identity);
+        nextLevelText.transform.SetParent(playUI.transform);
+        nextLevelText.SetActive(true);
         fadeCoroutine = StartCoroutine(FadeOutRoutine());
     }
 
     private IEnumerator FadeOutRoutine()
     {
-        Text text = nextButton.GetComponent<Text>();
+        Text text = nextLevelText.GetComponent<Text>();
         Color originalColor = text.color;
-        for (float t = 0.01f; t < 6; t += Time.deltaTime)
+        for (float t = 0.01f; t < 3; t += Time.deltaTime)
         {
             text.color = Color.Lerp(originalColor, Color.clear, Mathf.Min(1, t / 3));
             yield return null;
         }
-        if (nextButton != null)
+        if (nextLevelText != null)
         {
-            GameObject.Destroy(nextButton);
+            GameObject.Destroy(nextLevelText);
         }
     }
 

@@ -110,7 +110,7 @@ public class GameController : MonoBehaviour
             return;
         }
         current_wave++;
-        //  Shop?
+       
         enemy_spawner.StartWave();
         Debug.Log("Wave " + current_wave +" started");
         UImanager.SetNextLevel(current_wave.ToString());
