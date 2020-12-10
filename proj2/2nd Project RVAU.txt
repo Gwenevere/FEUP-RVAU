@@ -1,0 +1,20 @@
+STEPS (according to JAS)
+
+1st step - Calibrate camera to obtain intrinsic parameteres
+2nd step - Get image of poster in frontal view and print
+3rd step - Extract feature points and descriptor from image in frontal view
+4th step - Take photo of poster and extract feature points in that image
+5th step - Try to match feature points stored in both images (use RANSAC to solve wrong correspondences)
+6th step - Take real size coordinates and corresponding image coordinates 
+(to obtain these coordinates, we have to calculate homography - that is obtained from corresponce to feature points)
+7th step - Calculate center of poster, decide size of cubes, place and render cubes (using the projection matrix
+which is combination of intrinsic and extrinsic parameters, solve PnP)
+
+Note: only need to draw wireframe of cubes - need only to calculate vertices of cubes, and connect those points
+to create figure.
+
+Note 2 (only if you have time): Add images of posters in different perspectives in database - system will be more
+robust -> SIFT is rotation invariant and other stuff). It will be easier to establish correspondences
+Ele n aconselha a gastar mt tempo nisto -> cagar then
+
+In openCV there are primitives (n ouvi o resto, por isso só sabemos que há primitives xD)
