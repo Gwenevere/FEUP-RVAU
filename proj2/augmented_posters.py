@@ -5,7 +5,7 @@ import cv2 as cv
 import glob
 import os
 
-
+'''
 # Defining the dimensions of checkerboard
 CHECKERBOARD = (6,9)
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -68,15 +68,21 @@ print("rvecs : \n")
 print(rvecs)
 print("tvecs : \n")
 print(tvecs)
-
+'''
 img = cv.imread('posters/dunkirk.jpg')
+img = cv.resize(img, (int(img.shape[1]/2), int(img.shape[0]/2)))
 print(img.shape)
-gray= cv.cvtColor(img,cv.COLOR_BGR2GRAY)
+gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
+print("before")
 sift = cv.xfeatures2d.SIFT_create()
-kp, des = sift.detect(gray,None)
-img=cv.drawKeypoints(gray,kp,img,flags=cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-cv.imwrite('sift_keypoints.jpg',img)
+print(gray.shape)
+kp, des = sift.detectAndCompute(gray,None)
+print("after")
+gray = cv.drawKeypoints(gray,kp,img,flags=cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+print("afterr")
+cv.imwrite('sift_keypoints.jpg', gray)
 
+'''
 cv.namedWindow("camera")
 vc = cv.VideoCapture(0)
 
@@ -92,3 +98,4 @@ while rval:
     if key == 27: # exit on ESC
         break
 cv.destroyWindow("camera")
+'''
