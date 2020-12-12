@@ -5,7 +5,7 @@ import cv2 as cv
 import glob
 import os
 
-'''
+
 # Defining the dimensions of checkerboard
 CHECKERBOARD = (6,9)
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -44,6 +44,17 @@ for fname in images:
 
         # Draw and display the corners
         img = cv.drawChessboardCorners(img, CHECKERBOARD, corners2, ret)
+
+        vertices = np.array([
+            [corners[0][0][0], corners[0][0][1]],
+            [corners[0][0][0], corners[len(corners)-1][0][1]],
+            [corners[len(corners)-1][0][0], corners[len(corners)-1][0][1]],
+            [corners[len(corners)-1][0][0], corners[0][0][1]]
+        ], np.int32)
+
+        # cv.rectangle(img,(int(corners[0][0][0]), int(corners[0][0][1])),(int(corners[len(corners)-1][0][0]), int(corners[len(corners)-1][0][1])),(0,255,0),3)
+        cv.polylines(img,[vertices],True,(0,255,0), 3)
+
     
     cv.imshow('img',img)
     cv.waitKey(0)
@@ -60,14 +71,19 @@ detected corners (imgpoints)
 """
 ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
 
-print("Camera matrix : \n")
+print("\nCamera matrix :")
 print(mtx)
-print("dist : \n")
+print("\ndist :")
 print(dist)
-print("rvecs : \n")
-print(rvecs)
-print("tvecs : \n")
+print("\nrvecs :")
+print(rvecs[0])
+print("\ntvecs :")
 print(tvecs)
+print("\nimgpoints :")
+print(imgpoints[0][0])
+
+
+
 '''
 img = cv.imread('posters/dunkirk.jpg')
 img = cv.resize(img, (int(img.shape[1]/2), int(img.shape[0]/2)))
@@ -81,8 +97,8 @@ print("after")
 gray = cv.drawKeypoints(gray,kp,img,flags=cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 print("afterr")
 cv.imwrite('sift_keypoints.jpg', gray)
-
 '''
+
 cv.namedWindow("camera")
 vc = cv.VideoCapture(0)
 
@@ -98,4 +114,3 @@ while rval:
     if key == 27: # exit on ESC
         break
 cv.destroyWindow("camera")
-'''
