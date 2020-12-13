@@ -81,24 +81,24 @@ imgWarp = cv2.warpPerspective(img3, homography, (img2.shape[1], img2.shape[0]))
 # cv2.fillPoly(mask, [np.int32(dst)], (255,255,255))
 # maskInverse = cv2.bitwise_not(mask)
 
-mask = img1.copy()
-mask = cv2.cvtColor(mask,cv2.COLOR_BGR2GRAY)
-mask.fill(0)
-poly = np.int32(dst)
-cv2.fillPoly(mask, [poly], 255)
+# mask = img1.copy()
+# mask = cv2.cvtColor(mask,cv2.COLOR_BGR2GRAY)
+# mask.fill(0)
+# poly = np.int32(dst)
+# cv2.fillPoly(mask, [poly], 255)
 
-#create region of interest
-roi = img2[np.min(poly[:,1]):np.max(poly[:,1]),np.min(poly[:,0]):np.max(poly[:,0])]
-mask = mas[np.min(poly[:,1]):np.max(poly[:,1]),np.min(poly[:,0]):np.max(poly[:,0])]
+# #create region of interest
+# roi = img2[np.min(poly[:,1]):np.max(poly[:,1]),np.min(poly[:,0]):np.max(poly[:,0])]
+# mask = mas[np.min(poly[:,1]):np.max(poly[:,1]),np.min(poly[:,0]):np.max(poly[:,0])]
 
-mask_inv = cv2.bitwise_not(mask)
-img1_bg = cv2.bitwise_and(roi,roi,mask = mask_inv)
-src1_cut = src1[np.min(poly[:,1]):np.max(poly[:,1]),np.min(poly[:,0]):np.max(poly[:,0])]
+# mask_inv = cv2.bitwise_not(mask)
+# img1_bg = cv2.bitwise_and(roi,roi,mask = mask_inv)
+# src1_cut = src1[np.min(poly[:,1]):np.max(poly[:,1]),np.min(poly[:,0]):np.max(poly[:,0])]
 
 
-imgAug = img2.copy()
-imgAug = cv2.bitwise_and(imgAug, imgAug, mask=maskInverse)
-imgAug = cv2.bitwise_or(imgWarp, imgAug)
+# imgAug = img2.copy()
+# imgAug = cv2.bitwise_and(imgAug, imgAug, mask=maskInverse)
+# imgAug = cv2.bitwise_or(imgWarp, imgAug)
 
 # draw first 50 matches
 match_img = cv2.drawMatches(img1, kp1, img2, kp2, matches[:50], None)
