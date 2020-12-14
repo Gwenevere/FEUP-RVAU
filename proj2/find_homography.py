@@ -1,6 +1,8 @@
 import argparse
 import cv2
 import numpy as np
+import glob
+import os
 
 def findHomography(image_1_kp, image_2_kp, matches):
     image_1_points = np.zeros((len(matches), 1, 2), dtype=np.float32)
@@ -33,10 +35,137 @@ def resize_to_image(src, destSizeImage):
     else:
         return src
 
-img1 = cv2.imread('posters/dunkirk.jpg', 0)
 
-# img2 = cv2.imread('images/WIN_20201210_17_10_25_Pro.jpg', 0)
-img2 = cv2.imread('images/hehexd2.jpg', 0)
+def calibrate_camera():
+        
+    # Defining the dimensions of checkerboard
+    CHECKERBOARD = (6,9)
+    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+
+    # Creating vector to store vectors of 3D points for each checkerboard image
+    objpoints = []
+    # Creating vector to store vectors of 2D points for each checkerboard image
+    imgpoints = [] 
+
+
+    # Defining the world coordinates for 3D points
+    objp = np.zeros((1, CHECKERBOARD[0] * CHECKERBOARD[1], 3), np.float32)
+    objp[0,:,:2] = np.mgrid[0:CHECKERBOARD[0], 0:CHECKERBOARD[1]].T.reshape(-1, 2)
+    prev_img_shape = None
+
+    # Extracting path of individual image stored in a given directory
+    images = glob.glob('./images/checkerboard2/*.jpg')
+    for fname in images:
+        img = cv2.imread(fname)
+        gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+        # Find the chess board corners
+        # If desired number of corners are found in the image then ret = true
+        ret, corners = cv2.findChessboardCorners(gray, CHECKERBOARD, cv2.CALIB_CB_ADAPTIVE_THRESH + cv2.CALIB_CB_FAST_CHECK + cv2.CALIB_CB_NORMALIZE_IMAGE)
+        
+        """
+        If desired number of corner are detected,
+        we refine the pixel coordinates and display 
+        them on the images of checker board
+        """
+        if ret == True:
+            objpoints.append(objp)
+            # refining pixel coordinates for given 2d points.
+            corners2 = cv2.cornerSubPix(gray, corners, (11,11),(-1,-1), criteria)
+            
+            imgpoints.append(corners2)
+
+            # img = cv2.drawChessboardCorners(img, CHECKERBOARD, corners2, ret)
+            # img = cv2.resize(img, None, fx=700/img.shape[1], fy=700/img.shape[1])
+            # cv2.imshow('img',img)
+            # cv2.waitKey(0)
+
+    """
+    Performing camera calibration by 
+    passing the value of known 3D points (objpoints)
+    and corresponding pixel coordinates of the 
+    detected corners (imgpoints)
+    """
+    ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
+
+    return ret, mtx, dist, rvecs, tvecs
+
+def generate_solvePNP_points(image, homography, x_sections, y_sections):
+    
+    vertices = []
+    obj_points = []
+
+    x_increment = image.shape[1] / x_sections
+    y_increment = image.shape[0] / y_sections
+
+    for x in xrange(0, x_sections):
+
+        for y in xrange(0, y_sections):
+
+            vertices.append([x*x_increment, y*y_increment])
+
+    
+    print(vertices)
+
+    # vertices = np.float32([
+    #     [0, 0],
+    #     [0, img1.shape[0]],
+    #     [img1.shape[1], img1.shape[0]],
+    #     [img1.shape[1], 0],
+    #     [img1.shape[0]/2, 0],
+    #     [0, img1.shape[0]/2],
+    #     [0, img1.shape[1]/2],
+    #     [img1.shape[1]/2, 0],
+
+    # ]).reshape(-1,1,2)
+
+
+    # dst = cv2.perspectiveTransform(vertices, homography)
+    # img2 = cv2.polylines(img2, [np.int32(dst)], True, (0, 255, 0), 3)
+
+    # obj_points = np.float32([
+    #     [0, 0, 0],
+    #     [0, img1.shape[0], 0],
+    #     [img1.shape[1], img1.shape[0], 0],
+    #     [img1.shape[1], 0, 0],
+    #     [img1.shape[0]/2, 0, 0],
+    #     [0, img1.shape[0]/2, 0],
+    #     [0, img1.shape[1]/2, 0],
+    #     [img1.shape[1]/2, 0, 0],
+    # ])
+
+    return vertices, obj_points
+
+
+def draw_cube(image):
+    axis = np.float32([[0,0,0], [0,100,0], [100,100,0], [100,0,0],
+                    [0,0,-100],[0,100,-100],[100,100,-100],[100,0,-100] ]).reshape(-1,3)
+
+    imgpts, jac = cv2.projectPoints(axis, rvec, tvec, mtx, dist)
+
+    # Draw pillars
+    for i in range(0, 4):
+        j = i+4
+        cv2.line(image, tuple(imgpts[i][0]), tuple(imgpts[j][0]),(255,0,0),3)
+
+    # Draw bottom
+    for i in range(0, 4):
+        j = (i+1)%4
+        cv2.line(image, tuple(imgpts[i][0]), tuple(imgpts[j][0]),(0,255,),3)
+
+    # Draw top
+    for i in range(0, 4):
+        j = (i+1)%4
+        i = i+4
+        j = j+4
+        cv2.line(image, tuple(imgpts[i][0]), tuple(imgpts[j][0]), (0,0,255), 3)
+
+
+
+ret, mtx, dist, _, _ = calibrate_camera()
+
+
+img1 = cv2.imread('posters/dunkirk.jpg')
+img2 = cv2.imread('images/hehexd3.jpg')
 
 img1 = cv2.resize(img1, (int(img1.shape[1]*0.4), int(img1.shape[0]*0.4)))
 
@@ -51,65 +180,82 @@ matches = sorted(matches, key=lambda x: x.distance)
 
 match_img = cv2.drawMatches(img1, kp1, img2, kp2, matches[:50], None)
 
-    
 homography, mask = findHomography(kp1, kp2, matches)
 
-
-# print(homography)
-# print(mask.shape)
 
 vertices = np.float32([
     [0, 0],
     [0, img1.shape[0]],
     [img1.shape[1], img1.shape[0]],
-    [img1.shape[1], 0]
+    [img1.shape[1], 0],
+    # [img1.shape[0]/2, 0],
+    # [0, img1.shape[0]/2],
+    # [0, img1.shape[1]/2],
+    # [img1.shape[1]/2, 0],
+
 ]).reshape(-1,1,2)
 
 
 dst = cv2.perspectiveTransform(vertices, homography)
-img2 = cv2.polylines(img2, [np.int32(dst)], True, (0, 255, 0), 3)
+# img2 = cv2.polylines(img2, [np.int32(dst)], True, (0, 255, 0), 3)
+
+obj_points = np.float32([
+    [0, 0, 0],
+    [0, img1.shape[0], 0],
+    [img1.shape[1], img1.shape[0], 0],
+    [img1.shape[1], 0, 0],
+    # [img1.shape[0]/2, 0, 0],
+    # [0, img1.shape[0]/2, 0],
+    # [0, img1.shape[1]/2, 0],
+    # [img1.shape[1]/2, 0, 0],
+])
+
+retval, rvec, tvec, inliers = cv2.solvePnPRansac(obj_points, dst, mtx, dist)
 
 
+# Draw axis
 
-# cv2.solvePnP()
+draw_cube(img2)
 
-
-# img3 = cv2.imread('posters/kill_bill_vol1.jpg', 0)
-# img3 = resize_to_image(img3, img1)
-
-# imgWarp = cv2.warpPerspective(img3, homography, (img2.shape[1], img2.shape[0]))
-
-# # mask = np.zeros((img2.shape[0], img2.shape[1]), np.uint8)
-# # cv2.fillPoly(mask, [np.int32(dst)], (255,255,255))
-# # maskInverse = cv2.bitwise_not(mask)
-
-# # mask = img1.copy()
-# # mask = cv2.cvtColor(mask,cv2.COLOR_BGR2GRAY)
-# # mask.fill(0)
-# # poly = np.int32(dst)
-# # cv2.fillPoly(mask, [poly], 255)
-
-# # #create region of interest
-# # roi = img2[np.min(poly[:,1]):np.max(poly[:,1]),np.min(poly[:,0]):np.max(poly[:,0])]
-# # mask = mas[np.min(poly[:,1]):np.max(poly[:,1]),np.min(poly[:,0]):np.max(poly[:,0])]
-
-# # mask_inv = cv2.bitwise_not(mask)
-# # img1_bg = cv2.bitwise_and(roi,roi,mask = mask_inv)
-# # src1_cut = src1[np.min(poly[:,1]):np.max(poly[:,1]),np.min(poly[:,0]):np.max(poly[:,0])]
+cv2.imshow('img2',img2)
 
 
-# # imgAug = img2.copy()
-# # imgAug = cv2.bitwise_and(imgAug, imgAug, mask=maskInverse)
-# # imgAug = cv2.bitwise_or(imgWarp, imgAug)
+# # img3 = cv2.imread('posters/kill_bill_vol1.jpg', 0)
+# # img3 = resize_to_image(img3, img1)
 
-# draw first 50 matches
+# # imgWarp = cv2.warpPerspective(img3, homography, (img2.shape[1], img2.shape[0]))
 
-cv2.imshow('original', img1)
-cv2.imshow('real_world', img2)
-cv2.imshow('Matches', match_img)
-# cv2.imshow('augmentation', img3)
-# cv2.imshow('warp', imgWarp)
-# cv2.imshow('mask', mask)
+# # # mask = np.zeros((img2.shape[0], img2.shape[1]), np.uint8)
+# # # cv2.fillPoly(mask, [np.int32(dst)], (255,255,255))
+# # # maskInverse = cv2.bitwise_not(mask)
+
+# # # mask = img1.copy()
+# # # mask = cv2.cvtColor(mask,cv2.COLOR_BGR2GRAY)
+# # # mask.fill(0)
+# # # poly = np.int32(dst)
+# # # cv2.fillPoly(mask, [poly], 255)
+
+# # # #create region of interest
+# # # roi = img2[np.min(poly[:,1]):np.max(poly[:,1]),np.min(poly[:,0]):np.max(poly[:,0])]
+# # # mask = mas[np.min(poly[:,1]):np.max(poly[:,1]),np.min(poly[:,0]):np.max(poly[:,0])]
+
+# # # mask_inv = cv2.bitwise_not(mask)
+# # # img1_bg = cv2.bitwise_and(roi,roi,mask = mask_inv)
+# # # src1_cut = src1[np.min(poly[:,1]):np.max(poly[:,1]),np.min(poly[:,0]):np.max(poly[:,0])]
+
+
+# # # imgAug = img2.copy()
+# # # imgAug = cv2.bitwise_and(imgAug, imgAug, mask=maskInverse)
+# # # imgAug = cv2.bitwise_or(imgWarp, imgAug)
+
+# # draw first 50 matches
+
+# cv2.imshow('original', img1)
+# cv2.imshow('real_world', img2)
+# cv2.imshow('Matches', match_img)
+# # cv2.imshow('augmentation', img3)
+# # cv2.imshow('warp', imgWarp)
+# # cv2.imshow('mask', mask)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
