@@ -37,11 +37,13 @@ vertices = np.float32([
     [img.shape[1], 0],
 ]).reshape(-1,1,2)
 
-pts1 = np.float32([[img.shape[0]/2, img.shape[1]/2], [img.shape[0], img.shape[1]/4 + img.shape[1]/2], [img.shape[0]/2, img.shape[1]], [0, img.shape[1]/4 + img.shape[1]/2]])
+pts1 = np.float32([[img.shape[0]/2, img.shape[1]/2], [0, img.shape[1]/4 + img.shape[1]/2], [img.shape[0]/2, img.shape[1]], [img.shape[0], img.shape[1]/4 + img.shape[1]/2]])
 
 M = cv2.getPerspectiveTransform(vertices, pts1)
 
 dst = cv2.warpPerspective(img, M, (img.shape[0], img.shape[1]))
+
+dst = cv2.resize(dst,None,fx=0.7, fy=0.7, interpolation = cv2.INTER_CUBIC)
 
 cv2.imshow("imgtransformed", dst)
 cv2.waitKey(0)

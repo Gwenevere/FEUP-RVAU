@@ -3,14 +3,17 @@ import cv2
 import numpy as np
 import glob
 import os
+import math
 
-def findHomography(image_1_kp, image_2_kp, matches):
-    image_1_points = np.zeros((len(matches), 1, 2), dtype=np.float32)
-    image_2_points = np.zeros((len(matches), 1, 2), dtype=np.float32)
+def findHomography(image_1_kp, image_2_kp, matchs):
+    image_1_points = np.zeros((len(matchs), 1, 2), dtype=np.float32)
+    image_2_points = np.zeros((len(matchs), 1, 2), dtype=np.float32)
 
-    for i in range(0, len(matches)):
-        image_1_points[i] = image_1_kp[matches[i].queryIdx].pt
-        image_2_points[i] = image_2_kp[matches[i].trainIdx].pt
+    for i in range(0, len(matchs)):
+        #print("queryidx")
+        #print(matchs[0][0])
+        image_1_points[i] = image_1_kp[matchs[i].queryIdx].pt
+        image_2_points[i] = image_2_kp[matchs[i].trainIdx].pt
 
 
     homography, mask = cv2.findHomography(image_1_points, image_2_points, cv2.RANSAC, ransacReprojThreshold=20.0)
@@ -104,7 +107,7 @@ def generate_solvePNP_points(image, homography, x_sections, y_sections):
             vertices.append([x*x_increment, y*y_increment])
 
     
-    print(vertices)
+    #print(vertices)
 
     # vertices = np.float32([
     #     [0, 0],
@@ -136,15 +139,35 @@ def generate_solvePNP_points(image, homography, x_sections, y_sections):
     return vertices, obj_points
 
 
-def draw_cube(image):
-    axis = np.float32([[0,0,0], [0,100,0], [100,100,0], [100,0,0],
-                    [0,0,-100],[0,100,-100],[100,100,-100],[100,0,-100] ]).reshape(-1,3)
+def draw_rating(rating, image, image2):
+    for x in range(rating):
+        draw_cube(image, image2.shape[1]*0.5, image2.shape[0]*0.5, z=x)
+
+
+def draw_cube(image, dx=0, dy=0, width=200, z=0, zgap=50):
+    dx-=width/2
+    dy-=width/2
+
+    print(z)
+
+    axis = np.float32([[0+dx,0+dy,-(width+zgap)*z], [0+dx,width+dy,-(width+zgap)*z], [width+dx,width+dy,-(width+zgap)*z], [width+dx,0+dy,-(width+zgap)*z],
+                    [0+dx,0+dy,-width*(z+1)-zgap*z],[0+dx,width+dy,-width*(z+1)-zgap*z],[width+dx,width+dy,-width*(z+1)-zgap*z],[width+dx,0+dy,-width*(z+1)-zgap*z] ]).reshape(-1,3)
 
     imgpts, jac = cv2.projectPoints(axis, rvec, tvec, mtx, dist)
+
+
+    cv2.fillConvexPoly(image, np.int32([imgpts[0], imgpts[1], imgpts[2], imgpts[3]]), (z*40,z*40,z*40))
+    cv2.fillConvexPoly(image, np.int32([imgpts[4], imgpts[5], imgpts[6], imgpts[7]]), (z*40,z*40,z*40))
+    cv2.fillConvexPoly(image, np.int32([imgpts[0], imgpts[1], imgpts[5], imgpts[4]]), (z*40,z*40,z*40))
+    cv2.fillConvexPoly(image, np.int32([imgpts[1], imgpts[2], imgpts[6], imgpts[5]]), (z*40,z*40,z*40))
+    cv2.fillConvexPoly(image, np.int32([imgpts[2], imgpts[3], imgpts[7], imgpts[6]]), (z*40,z*40,z*40))
+    cv2.fillConvexPoly(image, np.int32([imgpts[3], imgpts[0], imgpts[4], imgpts[7]]), (z*40,z*40,z*40))
 
     # Draw pillars
     for i in range(0, 4):
         j = i+4
+        #print(imgpts[i][0])
+        #print(imgpts[j][0])
         cv2.line(image, tuple(imgpts[i][0]), tuple(imgpts[j][0]),(255,0,0),3)
 
     # Draw bottom
@@ -158,29 +181,51 @@ def draw_cube(image):
         i = i+4
         j = j+4
         cv2.line(image, tuple(imgpts[i][0]), tuple(imgpts[j][0]), (0,0,255), 3)
-
-
+        
 
 ret, mtx, dist, _, _ = calibrate_camera()
+#print(dist)#
 
-
+#img1 = cv2.imread('computed_posters/poster4/poster4.jpg')
+#img2 = cv2.imread('computed_posters/poster4/poster44.jpg')
 img1 = cv2.imread('posters/dunkirk.jpg')
 img2 = cv2.imread('images/hehexd3.jpg')
 
-img1 = cv2.resize(img1, (int(img1.shape[1]*0.4), int(img1.shape[0]*0.4)))
+#img1 = cv2.resize(img1, (int(img1.shape[1]*0.4), int(img1.shape[0]*0.4)))
 
-orb = cv2.ORB_create(nfeatures=500)
-kp1, des1 = orb.detectAndCompute(img1, None)
-kp2, des2 = orb.detectAndCompute(img2, None)
+#img1 = cv2.cvtColor(img1,cv2.COLOR_BGR2GRAY)
+#img2 = cv2.cvtColor(img2,cv2.COLOR_BGR2GRAY)
+
+#detector = cv2.ORB_create()
+detector = cv2.xfeatures2d.SIFT_create()
+kp1, des1 = detector.detectAndCompute(img1, None)
+kp2, des2 = detector.detectAndCompute(img2, None)
 
 # matcher takes normType, which is set to cv2.NORM_L2 for SIFT and SURF, cv2.NORM_HAMMING for ORB, FAST and BRIEF
-bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+bf = cv2.BFMatcher()
 matches = bf.match(des1, des2)
-matches = sorted(matches, key=lambda x: x.distance)
+print(matches[0])
+matches = bf.knnMatch(des1, des2, k=2)
 
-match_img = cv2.drawMatches(img1, kp1, img2, kp2, matches[:50], None)
+good = []
 
-homography, mask = findHomography(kp1, kp2, matches)
+good = [m for m, n in matches if m.distance < 0.7*n.distance]
+
+#print(matches)
+print('Number of good matches: ')
+print(len(good))
+
+match_img = cv2.drawMatchesKnn(img1, kp1, img2, kp2, [good], None,
+                            matchColor=(0, 255, 0), matchesMask=None,
+                            singlePointColor=(255, 0, 0), flags=0)
+
+#matches = sorted(matches, key=lambda x: x.distance)
+#match_img = cv2.drawMatches(img1, kp1, img2, kp2, matches[:50], None)
+
+cv2.imshow("im", match_img)
+cv2.waitKey(0)
+
+homography, mask = findHomography(kp1, kp2, good)
 
 
 vertices = np.float32([
@@ -197,7 +242,7 @@ vertices = np.float32([
 
 
 dst = cv2.perspectiveTransform(vertices, homography)
-# img2 = cv2.polylines(img2, [np.int32(dst)], True, (0, 255, 0), 3)
+img2 = cv2.polylines(img2, [np.int32(dst)], True, (0, 255, 0), 3)
 
 obj_points = np.float32([
     [0, 0, 0],
@@ -215,7 +260,7 @@ retval, rvec, tvec, inliers = cv2.solvePnPRansac(obj_points, dst, mtx, dist)
 
 # Draw axis
 
-draw_cube(img2)
+draw_rating(3, img2, img1)
 
 cv2.imshow('img2',img2)
 
