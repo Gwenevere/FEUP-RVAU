@@ -141,33 +141,49 @@ def generate_solvePNP_points(image, homography, x_sections, y_sections):
 
 def draw_rating(rating, image, image2):
     for x in range(rating):
-        draw_cube(image, image2.shape[1]*0.5, image2.shape[0]*0.5, z=x)
+        draw_cube_title(image, "Dunkirk", image2.shape[1]*0.5, image2.shape[0]*0.5, z=x)
+
+def create_trans_im(width, height, title):
+    #create 3 separate BGRA images as our "layers"
+    layer = np.zeros((width, height, 3))
+
+    cv2.putText(layer, title, (int(height*0.05), int(width*0.1)), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,0,0), 5, cv2.LINE_AA)
+
+    cv2.imshow("out.png", layer)
+    
+    return layer
 
 
-def draw_cube(image, dx=0, dy=0, width=200, z=0, zgap=50):
-    dx-=width/2
-    dy-=width/2
+def draw_cube_title(image, title_name="", dx=0, dy=0, width=200, z=0, zgap=50):
+    dx -= width/2
+    dy -= width/2
 
     print(z)
 
-    axis = np.float32([[0+dx,0+dy,-(width+zgap)*z], [0+dx,width+dy,-(width+zgap)*z], [width+dx,width+dy,-(width+zgap)*z], [width+dx,0+dy,-(width+zgap)*z],
-                    [0+dx,0+dy,-width*(z+1)-zgap*z],[0+dx,width+dy,-width*(z+1)-zgap*z],[width+dx,width+dy,-width*(z+1)-zgap*z],[width+dx,0+dy,-width*(z+1)-zgap*z] ]).reshape(-1,3)
+    axis = np.float32([[0 + dx, 0 + dy,-(width + zgap) * z], 
+                       [0 + dx, width + dy,-(width + zgap) * z], 
+                       [width + dx, width + dy,-(width + zgap) * z], 
+                       [width + dx, 0 + dy,-(width + zgap) * z],
+                       [0 + dx, 0 + dy,-width * (z + 1) - zgap * z],
+                       [0 + dx, width + dy,-width * (z + 1) - zgap * z],
+                       [width + dx, width + dy, -width * (z + 1) - zgap * z], 
+                       [width + dx, 0 + dy,-width * (z + 1) - zgap * z] 
+                    ]).reshape(-1,3)
 
     imgpts, jac = cv2.projectPoints(axis, rvec, tvec, mtx, dist)
 
 
-    cv2.fillConvexPoly(image, np.int32([imgpts[0], imgpts[1], imgpts[2], imgpts[3]]), (z*40,z*40,z*40))
-    cv2.fillConvexPoly(image, np.int32([imgpts[4], imgpts[5], imgpts[6], imgpts[7]]), (z*40,z*40,z*40))
-    cv2.fillConvexPoly(image, np.int32([imgpts[0], imgpts[1], imgpts[5], imgpts[4]]), (z*40,z*40,z*40))
-    cv2.fillConvexPoly(image, np.int32([imgpts[1], imgpts[2], imgpts[6], imgpts[5]]), (z*40,z*40,z*40))
-    cv2.fillConvexPoly(image, np.int32([imgpts[2], imgpts[3], imgpts[7], imgpts[6]]), (z*40,z*40,z*40))
-    cv2.fillConvexPoly(image, np.int32([imgpts[3], imgpts[0], imgpts[4], imgpts[7]]), (z*40,z*40,z*40))
+    cv2.fillConvexPoly(image, np.int32([imgpts[0], imgpts[1], imgpts[2], imgpts[3]]), (z * 40, z * 40, z * 40))
+    cv2.fillConvexPoly(image, np.int32([imgpts[4], imgpts[5], imgpts[6], imgpts[7]]), (z * 40, z * 40, z * 40))
+    cv2.fillConvexPoly(image, np.int32([imgpts[0], imgpts[1], imgpts[5], imgpts[4]]), (z * 40, z * 40, z * 40))
+    cv2.fillConvexPoly(image, np.int32([imgpts[1], imgpts[2], imgpts[6], imgpts[5]]), (z * 40, z * 40, z * 40))
+    cv2.fillConvexPoly(image, np.int32([imgpts[2], imgpts[3], imgpts[7], imgpts[6]]), (z * 40, z * 40, z * 40))
+    cv2.fillConvexPoly(image, np.int32([imgpts[3], imgpts[0], imgpts[4], imgpts[7]]), (z * 40, z * 40, z * 40))
+
 
     # Draw pillars
     for i in range(0, 4):
         j = i+4
-        #print(imgpts[i][0])
-        #print(imgpts[j][0])
         cv2.line(image, tuple(imgpts[i][0]), tuple(imgpts[j][0]),(255,0,0),3)
 
     # Draw bottom
@@ -181,15 +197,16 @@ def draw_cube(image, dx=0, dy=0, width=200, z=0, zgap=50):
         i = i+4
         j = j+4
         cv2.line(image, tuple(imgpts[i][0]), tuple(imgpts[j][0]), (0,0,255), 3)
-        
+            
 
 ret, mtx, dist, _, _ = calibrate_camera()
-#print(dist)#
 
-#img1 = cv2.imread('computed_posters/poster4/poster4.jpg')
-#img2 = cv2.imread('computed_posters/poster4/poster44.jpg')
-img1 = cv2.imread('posters/dunkirk.jpg')
-img2 = cv2.imread('images/hehexd3.jpg')
+img1 = cv2.imread('computed_posters/poster4/poster4.jpg')
+img2 = cv2.imread('computed_posters/poster4/poster44.jpg')
+poster_name = "wefwrf"
+#img1 = cv2.imread('posters/dunkirk.jpg')
+#img2 = cv2.imread('images/hehexd3.jpg')
+#poster_name = "Dunkirk"
 
 #img1 = cv2.resize(img1, (int(img1.shape[1]*0.4), int(img1.shape[0]*0.4)))
 
@@ -211,7 +228,6 @@ good = []
 
 good = [m for m, n in matches if m.distance < 0.7*n.distance]
 
-#print(matches)
 print('Number of good matches: ')
 print(len(good))
 
@@ -233,10 +249,6 @@ vertices = np.float32([
     [0, img1.shape[0]],
     [img1.shape[1], img1.shape[0]],
     [img1.shape[1], 0],
-    # [img1.shape[0]/2, 0],
-    # [0, img1.shape[0]/2],
-    # [0, img1.shape[1]/2],
-    # [img1.shape[1]/2, 0],
 
 ]).reshape(-1,1,2)
 
@@ -249,10 +261,6 @@ obj_points = np.float32([
     [0, img1.shape[0], 0],
     [img1.shape[1], img1.shape[0], 0],
     [img1.shape[1], 0, 0],
-    # [img1.shape[0]/2, 0, 0],
-    # [0, img1.shape[0]/2, 0],
-    # [0, img1.shape[1]/2, 0],
-    # [img1.shape[1]/2, 0, 0],
 ])
 
 retval, rvec, tvec, inliers = cv2.solvePnPRansac(obj_points, dst, mtx, dist)
@@ -262,7 +270,20 @@ retval, rvec, tvec, inliers = cv2.solvePnPRansac(obj_points, dst, mtx, dist)
 
 draw_rating(3, img2, img1)
 
-cv2.imshow('img2',img2)
+textimg = create_trans_im(img1.shape[0], img1.shape[1], poster_name)
+
+#mask = np.zeros(img1.shape[1], img1.shape[0], 4)
+
+cv2.fillPoly(mask, [np.int32(dst)], (255,255,255))
+
+imgWarp = cv2.warpPerspective(textimg, homography, (img2.shape[1], img2.shape[0]))
+
+for x in range(img2.shape[0]):
+    for y in range(img2.shape[1]):
+        if(imgWarp[x][y][0] == 255 and imgWarp[x][y][1] == 0 and imgWarp[x][y][2] == 0):
+            img2[x][y] = (255,0,0)
+
+cv2.imshow('img2', img2)
 
 
 # # img3 = cv2.imread('posters/kill_bill_vol1.jpg', 0)

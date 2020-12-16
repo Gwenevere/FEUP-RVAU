@@ -3,16 +3,28 @@ import argparse
 import numpy as np
 import os
 
+def checkrating(value):
+    ivalue = int(value)
+    if not (ivalue<=5 and ivalue >=1):
+        raise argparse.ArgumentTypeError("%s is not in the rating range" % value)
+    return ivalue
+
 parser = argparse.ArgumentParser(description='Read an image and make transforms and compute descriptors.')
 parser.add_argument('image', type=str,
                     help='name of the image inside posters folder (with extension)')
+parser.add_argument('name', type=str,
+                    help='name of the movie')
+parser.add_argument('name', type=checkrating,
+                    help='rating of the movie (1-5)')
 args = parser.parse_args()
 
 image_name = os.path.splitext(args.image)[0]
 extension = os.path.splitext(args.image)[1]
 img = cv2.imread("posters/" + args.image)
 
-print(img)
+if(img == None):
+    print("No such image")
+    exit(0)
 
 cv2.imshow("image", img)
 cv2.waitKey(0)
