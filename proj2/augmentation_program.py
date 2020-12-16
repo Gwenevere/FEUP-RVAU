@@ -204,7 +204,7 @@ def run_tutorial():
 
     img1 = cv2.imread('preparation/' + movie_name + '/' + file_name)
 
-    print("1º passo: Identificar features na imagem original e dar match com a imagem da camera para obter a matriz da homografia")
+    print("1º passo: Identify features in the original image and match with the camera image to get the homography matrix")
 
     make_transforms.run(None, 'dunkirk.jpg', "tutorial", 3, None)
     make_transforms.run(True, None, None, None, "checkerboard2")
@@ -264,7 +264,7 @@ def run_tutorial():
         dst = cv2.perspectiveTransform(vertices, homography)
         img2 = cv2.polylines(img2, [np.int32(dst)], True, (0, 255, 0), 3)
 
-        print("2º passo: Utilizar a homografia para identificar os limites da imagem da webcam e para resolver o problema PnP")
+        print("2º passo: Use the homography matrix to get the image bounds in the camera image to solve the PnP problem")
         cv2.imshow("img", img2)
         cv2.waitKey(0)
         cv2.destroyWindow("img")
@@ -290,7 +290,7 @@ def run_tutorial():
                 if(imgWarp[x][y][0] == 255 and imgWarp[x][y][1] == 0 and imgWarp[x][y][2] == 0):
                     img2[x][y] = (255,0,0)
 
-        print("3º passo: Utilizar as matrizes de translação e rotação da camera para desenher os cubos com a perspetiva correta")
+        print("3º passo: Use the translation and rotation matrices to correctly position the cubes on the scene")
         cv2.imshow('img', img2)
         cv2.waitKey(0)
         cv2.destroyWindow("img")
