@@ -109,7 +109,7 @@ parser.add_argument('-i', type=str,
                     help='name of the image inside posters folder (with extension)')
 parser.add_argument('-n', type=str,
                     help='name of the movie')
-parser.add_argument('-r', type=checkrating,
+parser.add_argument('-r', type=checkrating',
                     help='rating of the movie (1-5)')
 args = parser.parse_args()
 
@@ -117,7 +117,7 @@ create_directories()
 
 if(not args.c):
     if args.i is None or args.n is None or args.r is None:
-        print("You must provied the image (-i flag), the name of the movie (-n) and the rating (-r)")
+        print("You must provide the image (-i flag), the name of the movie (-n) and the rating (-r)")
         exit(0)
 else:
     camera_calibration()
@@ -125,11 +125,7 @@ else:
     exit(0)
 
 # Uploading posters program
-#try:
 image_name = os.path.splitext(args.i)[0]
-#except AttributeError:
-#    print("Please provide the extension of the file (poster.jpg for example)")
-#    exit(0)
 
 extension = os.path.splitext(args.i)[1]
 movie_name = args.n
@@ -151,34 +147,10 @@ cv2.waitKey(0)
 sift = cv2.SIFT_create()
 kp, des = sift.detectAndCompute(img, None)
 
-#orb = cv2.ORB_create(nfeatures=500)
-#kp, des = orb.detectAndCompute(img, None)
-
 img2 = cv2.drawKeypoints(img, kp, None, color=(0,255,0), flags=0)
 
 cv2.imshow("keypoints", img2)
 cv2.waitKey(0)
-
-'''
-# Transformations
-vertices = np.float32([
-    [0, 0],
-    [0, img.shape[0]],
-    [img.shape[1], img.shape[0]],
-    [img.shape[1], 0],
-]).reshape(-1,1,2)
-
-pts1 = np.float32([[img.shape[0]/2, img.shape[1]/2], [0, img.shape[1]/4 + img.shape[1]/2], [img.shape[0]/2, img.shape[1]], [img.shape[0], img.shape[1]/4 + img.shape[1]/2]])
-
-M = cv2.getPerspectiveTransform(vertices, pts1)
-
-dst = cv2.warpPerspective(img, M, (img.shape[0], img.shape[1]))
-
-dst = cv2.resize(dst,None,fx=0.7, fy=0.7, interpolation = cv2.INTER_CUBIC)
-
-cv2.imshow("imgtransformed", dst)
-cv2.waitKey(0)
-'''
 
 # Create poster directory
 if not os.path.exists(PREPARATION_DIR+ '/' + os.path.splitext(args.i)[0]):

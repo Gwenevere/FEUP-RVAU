@@ -4,14 +4,32 @@ import numpy as np
 import glob
 import os
 import math
+import json
+
+
+def checkmode(value):
+    ivalue = int(value)
+    if not (ivalue == 1 or ivalue == 2):
+        raise argparse.ArgumentTypeError("%s is not in the rating range" % value)
+    return ivalue 
+
+parser = argparse.ArgumentParser(description='Acquire an image, show the name of the movie and cubes representing the movie\'s rating')
+parser.add_argument('-n', type=str, help='-n for movie name')
+parser.add_argument('-m', type=checkmode, help='-m for two possible working modes: 1 - normal mode | 2 - tutorial mode')
+args = parser.parse_args()
+
+if args.n is None or args.m is None:
+    print("You must provide the movie (-n flag) and the mode (-m)")
+    exit(0)
+
+movie_name = args.n 
+mode = args.m
 
 def findHomography(image_1_kp, image_2_kp, matchs):
     image_1_points = np.zeros((len(matchs), 1, 2), dtype=np.float32)
     image_2_points = np.zeros((len(matchs), 1, 2), dtype=np.float32)
 
     for i in range(0, len(matchs)):
-        #print("queryidx")
-        #print(matchs[0][0])
         image_1_points[i] = image_1_kp[matchs[i].queryIdx].pt
         image_2_points[i] = image_2_kp[matchs[i].trainIdx].pt
 
@@ -37,7 +55,6 @@ def resize_to_image(src, destSizeImage):
         return dest
     else:
         return src
-
 
 def calibrate_camera():
         
@@ -77,11 +94,6 @@ def calibrate_camera():
             
             imgpoints.append(corners2)
 
-            # img = cv2.drawChessboardCorners(img, CHECKERBOARD, corners2, ret)
-            # img = cv2.resize(img, None, fx=700/img.shape[1], fy=700/img.shape[1])
-            # cv2.imshow('img',img)
-            # cv2.waitKey(0)
-
     """
     Performing camera calibration by 
     passing the value of known 3D points (objpoints)
@@ -106,42 +118,11 @@ def generate_solvePNP_points(image, homography, x_sections, y_sections):
 
             vertices.append([x*x_increment, y*y_increment])
 
-    
-    #print(vertices)
-
-    # vertices = np.float32([
-    #     [0, 0],
-    #     [0, img1.shape[0]],
-    #     [img1.shape[1], img1.shape[0]],
-    #     [img1.shape[1], 0],
-    #     [img1.shape[0]/2, 0],
-    #     [0, img1.shape[0]/2],
-    #     [0, img1.shape[1]/2],
-    #     [img1.shape[1]/2, 0],
-
-    # ]).reshape(-1,1,2)
-
-
-    # dst = cv2.perspectiveTransform(vertices, homography)
-    # img2 = cv2.polylines(img2, [np.int32(dst)], True, (0, 255, 0), 3)
-
-    # obj_points = np.float32([
-    #     [0, 0, 0],
-    #     [0, img1.shape[0], 0],
-    #     [img1.shape[1], img1.shape[0], 0],
-    #     [img1.shape[1], 0, 0],
-    #     [img1.shape[0]/2, 0, 0],
-    #     [0, img1.shape[0]/2, 0],
-    #     [0, img1.shape[1]/2, 0],
-    #     [img1.shape[1]/2, 0, 0],
-    # ])
-
     return vertices, obj_points
-
 
 def draw_rating(rating, image, image2):
     for x in range(rating):
-        draw_cube_title(image, "Dunkirk", image2.shape[1]*0.5, image2.shape[0]*0.5, z=x)
+        draw_cube_title(image, image2.shape[1]*0.5, image2.shape[0]*0.5, z=x)
 
 def create_trans_im(width, height, title):
     #create 3 separate BGRA images as our "layers"
@@ -149,16 +130,14 @@ def create_trans_im(width, height, title):
 
     cv2.putText(layer, title, (int(height*0.05), int(width*0.1)), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,0,0), 5, cv2.LINE_AA)
 
-    cv2.imshow("out.png", layer)
+    if mode == 2:
+        cv2.imshow("out.png", layer)
     
     return layer
 
-
-def draw_cube_title(image, title_name="", dx=0, dy=0, width=200, z=0, zgap=50):
+def draw_cube_title(image, dx=0, dy=0, width=200, z=0, zgap=50):
     dx -= width/2
     dy -= width/2
-
-    print(z)
 
     axis = np.float32([[0 + dx, 0 + dy,-(width + zgap) * z], 
                        [0 + dx, width + dy,-(width + zgap) * z], 
@@ -197,23 +176,35 @@ def draw_cube_title(image, title_name="", dx=0, dy=0, width=200, z=0, zgap=50):
         i = i+4
         j = j+4
         cv2.line(image, tuple(imgpts[i][0]), tuple(imgpts[j][0]), (0,0,255), 3)
-            
 
 ret, mtx, dist, _, _ = calibrate_camera()
 
-img1 = cv2.imread('computed_posters/poster4/poster4.jpg')
-img2 = cv2.imread('computed_posters/poster4/poster44.jpg')
-poster_name = "wefwrf"
-#img1 = cv2.imread('posters/dunkirk.jpg')
-#img2 = cv2.imread('images/hehexd3.jpg')
-#poster_name = "Dunkirk"
+img1 = cv2.imread('preparation/' + movie_name + '/' + movie_name + '.jpg')
+if mode == 2 and img1 is not None:
+    print('\n\nFound ' + movie_name + ' in database')
 
-#img1 = cv2.resize(img1, (int(img1.shape[1]*0.4), int(img1.shape[0]*0.4)))
+elif img1 is None:
+    print(movie_name + ' does not exist in our database. Please insert another title.')
+    exit(0)
 
-#img1 = cv2.cvtColor(img1,cv2.COLOR_BGR2GRAY)
-#img2 = cv2.cvtColor(img2,cv2.COLOR_BGR2GRAY)
+img2 = cv2.imread('images/' + movie_name + '.jpg')
+if mode == 2 and img2 is not None:
+    print('Found ' + movie_name + ' in images folder. Ready to test.\n\n')
 
-#detector = cv2.ORB_create()
+elif img2 is None:
+    print(movie_name + ' is not available for testing. Please insert another title.\n\n')
+    exit(0)
+
+poster_name = movie_name
+with open('preparation/' + movie_name + '/movie_data.txt', 'r') as movie_info:
+    movie_infoList = json.load(movie_info)
+
+    if mode == 2:
+        print("Movie information present in descriptor: ")
+        print(movie_infoList)
+
+rating = movie_infoList['movie_rating']
+
 detector = cv2.xfeatures2d.SIFT_create()
 kp1, des1 = detector.detectAndCompute(img1, None)
 kp2, des2 = detector.detectAndCompute(img2, None)
@@ -228,21 +219,20 @@ good = []
 
 good = [m for m, n in matches if m.distance < 0.7*n.distance]
 
-print('Number of good matches: ')
-print(len(good))
+if mode == 2:
+    print('Number of good matches: ')
+    print(len(good))
 
 match_img = cv2.drawMatchesKnn(img1, kp1, img2, kp2, [good], None,
                             matchColor=(0, 255, 0), matchesMask=None,
                             singlePointColor=(255, 0, 0), flags=0)
 
-#matches = sorted(matches, key=lambda x: x.distance)
-#match_img = cv2.drawMatches(img1, kp1, img2, kp2, matches[:50], None)
 
-cv2.imshow("im", match_img)
-cv2.waitKey(0)
+if mode == 2:
+    cv2.imshow("im", match_img)
+    cv2.waitKey(0)
 
 homography, mask = findHomography(kp1, kp2, good)
-
 
 vertices = np.float32([
     [0, 0],
@@ -265,17 +255,11 @@ obj_points = np.float32([
 
 retval, rvec, tvec, inliers = cv2.solvePnPRansac(obj_points, dst, mtx, dist)
 
-
-# Draw axis
-
-draw_rating(3, img2, img1)
+# Draw cubes & title
+draw_rating(rating, img2, img1)
 
 textimg = create_trans_im(img1.shape[0], img1.shape[1], poster_name)
-
-#mask = np.zeros(img1.shape[1], img1.shape[0], 4)
-
 cv2.fillPoly(mask, [np.int32(dst)], (255,255,255))
-
 imgWarp = cv2.warpPerspective(textimg, homography, (img2.shape[1], img2.shape[0]))
 
 for x in range(img2.shape[0]):
@@ -284,44 +268,6 @@ for x in range(img2.shape[0]):
             img2[x][y] = (255,0,0)
 
 cv2.imshow('img2', img2)
-
-
-# # img3 = cv2.imread('posters/kill_bill_vol1.jpg', 0)
-# # img3 = resize_to_image(img3, img1)
-
-# # imgWarp = cv2.warpPerspective(img3, homography, (img2.shape[1], img2.shape[0]))
-
-# # # mask = np.zeros((img2.shape[0], img2.shape[1]), np.uint8)
-# # # cv2.fillPoly(mask, [np.int32(dst)], (255,255,255))
-# # # maskInverse = cv2.bitwise_not(mask)
-
-# # # mask = img1.copy()
-# # # mask = cv2.cvtColor(mask,cv2.COLOR_BGR2GRAY)
-# # # mask.fill(0)
-# # # poly = np.int32(dst)
-# # # cv2.fillPoly(mask, [poly], 255)
-
-# # # #create region of interest
-# # # roi = img2[np.min(poly[:,1]):np.max(poly[:,1]),np.min(poly[:,0]):np.max(poly[:,0])]
-# # # mask = mas[np.min(poly[:,1]):np.max(poly[:,1]),np.min(poly[:,0]):np.max(poly[:,0])]
-
-# # # mask_inv = cv2.bitwise_not(mask)
-# # # img1_bg = cv2.bitwise_and(roi,roi,mask = mask_inv)
-# # # src1_cut = src1[np.min(poly[:,1]):np.max(poly[:,1]),np.min(poly[:,0]):np.max(poly[:,0])]
-
-
-# # # imgAug = img2.copy()
-# # # imgAug = cv2.bitwise_and(imgAug, imgAug, mask=maskInverse)
-# # # imgAug = cv2.bitwise_or(imgWarp, imgAug)
-
-# # draw first 50 matches
-
-# cv2.imshow('original', img1)
-# cv2.imshow('real_world', img2)
-# cv2.imshow('Matches', match_img)
-# # cv2.imshow('augmentation', img3)
-# # cv2.imshow('warp', imgWarp)
-# # cv2.imshow('mask', mask)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
