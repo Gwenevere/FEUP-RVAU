@@ -63,7 +63,7 @@ def camera_calibration():
         them on the images of checker board
         """
         if ret == True:
-            cv2.imwrite("calib_test" + str(c) + ".jpg", frame)
+            #cv2.imwrite("calib_test" + str(c) + ".jpg", frame)
             c = c+1
             objpoints.append(objp)
             # refining pixel coordinates for given 2d points.
@@ -109,8 +109,7 @@ parser.add_argument('-i', type=str,
                     help='name of the image inside posters folder (with extension)')
 parser.add_argument('-n', type=str,
                     help='name of the movie')
-parser.add_argument('-r', type=checkrating',
-                    help='rating of the movie (1-5)')
+parser.add_argument('-r', type=checkrating, help='rating of the movie (1-5)')
 args = parser.parse_args()
 
 create_directories()
@@ -121,7 +120,7 @@ if(not args.c):
         exit(0)
 else:
     camera_calibration()
-    print("Camera calibrated with success with " + NUM_IMAGES_CALIB + " images")
+    print("Camera calibrated with success with " + str(NUM_IMAGES_CALIB) + " images")
     exit(0)
 
 # Uploading posters program
@@ -144,7 +143,7 @@ cv2.imshow("image", img)
 cv2.waitKey(0)
 
 # May conflict with the versions
-sift = cv2.SIFT_create()
+sift = cv2.xfeatures2d.SIFT_create()
 kp, des = sift.detectAndCompute(img, None)
 
 img2 = cv2.drawKeypoints(img, kp, None, color=(0,255,0), flags=0)
