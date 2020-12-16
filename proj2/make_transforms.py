@@ -138,11 +138,11 @@ def run(argC, argI, argN, argR, argCI):
     if(not argC):
         if argI is None or argN is None or argR is None:
             print("You must provide the image (-i flag), the name of the movie (-n) and the rating (-r)")
-            exit(0)
+            return
     else:
         camera_calibration(argCI)
         print("Camera calibrated with success")
-        exit(0)
+        return
 
     # Uploading posters program
     image_name = os.path.splitext(argI)[0]
@@ -156,7 +156,7 @@ def run(argC, argI, argN, argR, argCI):
     if img is None:
         if img2 is None:
             print("Image not found")
-            exit(0)
+            return
         else:
             img = img2
 
@@ -189,6 +189,8 @@ def run(argC, argI, argN, argR, argCI):
     # Store image and descriptor
     np.save(PREPARATION_DIR + "/" + image_name + "/descriptor", movie_info)
     cv2.imwrite(PREPARATION_DIR + "/" + image_name + '/' + argI, img)
+
+    cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
