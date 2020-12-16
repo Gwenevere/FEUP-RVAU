@@ -206,7 +206,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    print(args.c)
-
-
     run(args.c, args.i, args.n, args.r, args.ci)

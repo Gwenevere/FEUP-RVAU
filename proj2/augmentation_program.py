@@ -7,7 +7,7 @@ import math
 import json
 import sys
 
-import make_transforms
+import preparation_program
 
 def checkmode(value):
     ivalue = int(value)
@@ -131,6 +131,18 @@ def draw_cube_title(image, rvec, tvec, mtx, dist, dx=0, dy=0, width=200, z=0, zg
 
 def compute_frame(img2):
 
+    with open('preparation/' + movie_name + '/movie_data.txt', 'r') as movie_info:
+        movie_infoList = json.load(movie_info)
+
+    mtx, dist = calibrate_camera()
+
+    detector = cv2.xfeatures2d.SIFT_create()
+
+    rating = movie_infoList['movie_rating']
+    name = movie_infoList['movie_name']
+
+    img1 = cv2.imread('preparation/' + movie_name + '/' + file_name)
+
     kp1, des1 = detector.detectAndCompute(img1, None)
     kp2, des2 = detector.detectAndCompute(img2, None)
 
@@ -180,7 +192,7 @@ def compute_frame(img2):
         retval, rvec, tvec, inliers = cv2.solvePnPRansac(obj_points, dst, mtx, dist)
 
         # Draw cubes & title
-        draw_rating(rating, img2, img1, rvec, tvec)
+        draw_rating(rating, img2, img1, rvec, tvec, mtx, dist)
 
         textimg = create_trans_im(img1.shape[0], img1.shape[1], movie_name)
         cv2.fillPoly(mask, [np.int32(dst)], (255,255,255))
@@ -206,8 +218,8 @@ def run_tutorial():
 
     print("1º passo: Identify features in the original image and match with the camera image to get the homography matrix")
 
-    make_transforms.run(None, 'dunkirk.jpg', "tutorial", 3, None)
-    make_transforms.run(True, None, None, None, "checkerboard2")
+    preparation_program.run(None, 'dunkirk.jpg', "tutorial", 3, None)
+    preparation_program.run(True, None, None, None, "checkerboard2")
 
     img2 = cv2.imread("images/dunkirk_test.jpg")
 
