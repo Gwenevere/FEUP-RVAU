@@ -2,6 +2,7 @@ import cv2
 import argparse
 import numpy as np
 import os
+import json
 
 def checkrating(value):
     ivalue = int(value)
@@ -14,15 +15,17 @@ parser.add_argument('image', type=str,
                     help='name of the image inside posters folder (with extension)')
 parser.add_argument('name', type=str,
                     help='name of the movie')
-parser.add_argument('name', type=checkrating,
+parser.add_argument('rating', type=checkrating,
                     help='rating of the movie (1-5)')
 args = parser.parse_args()
 
 image_name = os.path.splitext(args.image)[0]
 extension = os.path.splitext(args.image)[1]
+movie_name = args.name
+movie_rating = args.rating
 img = cv2.imread("posters/" + args.image)
 
-if(img == None):
+if img is None:
     print("No such image")
     exit(0)
 
@@ -63,6 +66,21 @@ cv2.waitKey(0)
 if not os.path.exists('computed_posters/' + os.path.splitext(args.image)[0]):
     os.mkdir("computed_posters/" + os.path.splitext(args.image)[0])
 
-np.save("computed_posters/" + image_name + "/descriptor", des)
+movie_info = {}
+movie_info['des'] = []
+desl=des.tolist()
+movie_info['des'].append(desl)
+
+movie_info['movie_name'] = []
+movie_info['movie_name'].append(movie_name)
+
+movie_info['movie_rating'] = []
+movie_info['movie_rating'].append(movie_rating)
+
+
+with open('computed_posters/' + image_name + '/movie_data.txt', 'w+') as outfile:
+    json.dump(movie_info, outfile)
+
+np.save("computed_posters/" + image_name + "/descriptor", movie_info)
 cv2.imwrite("computed_posters/" + image_name + '/' + args.image, img)
 cv2.imwrite("computed_posters/" + image_name + '/' + image_name + '2' + extension, dst)
