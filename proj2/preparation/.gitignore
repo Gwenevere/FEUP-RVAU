@@ -1,0 +1,6 @@
+*
+
+!.gitignore
+!*/
+
+!(camera_calibration/.gitkeep)

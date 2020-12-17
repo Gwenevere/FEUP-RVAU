@@ -25,7 +25,7 @@ def findHomography(image_1_kp, image_2_kp, matchs):
         image_2_points[i] = image_2_kp[matchs[i].trainIdx].pt
 
 
-    homography, mask = cv2.findHomography(image_1_points, image_2_points, cv2.RANSAC, ransacReprojThreshold=20.0)
+    homography, mask = cv2.findHomography(image_1_points, image_2_points, cv2.RANSAC)
 
     return homography, mask
 
@@ -102,7 +102,7 @@ def draw_cube_title(image, rvec, tvec, mtx, dist, dx=0, dy=0, width=200, z=0, zg
 
     #try:
     for n in range(imgpts.shape[0]):
-        if abs(imgpts[n][0][0]) >= image.shape[0]*20 or abs(imgpts[n][0][1]) >= image.shape[1]*20:
+        if math.isnan(imgpts[n][0][0]) or math.isnan(imgpts[n][0][1]) or abs(imgpts[n][0][0]) >= image.shape[0]*20 or abs(imgpts[n][0][1]) >= image.shape[1]*20:
             return
 
     cv2.fillConvexPoly(image, np.int32([imgpts[0], imgpts[1], imgpts[2], imgpts[3]]), (z * 40, z * 40, z * 40))
@@ -129,12 +129,10 @@ def draw_cube_title(image, rvec, tvec, mtx, dist, dx=0, dy=0, width=200, z=0, zg
         j = j+4
         cv2.line(image, tuple(imgpts[i][0]), tuple(imgpts[j][0]), (0,0,255), 1)
 
-def compute_frame(img2):
+def compute_frame(img2, mtx, dist):
 
     with open('preparation/' + movie_name + '/movie_data.txt', 'r') as movie_info:
         movie_infoList = json.load(movie_info)
-
-    mtx, dist = calibrate_camera()
 
     detector = cv2.xfeatures2d.SIFT_create()
 
@@ -209,7 +207,6 @@ def compute_frame(img2):
 
 def run_tutorial():
 
-    mtx, dist = calibrate_camera()
 
     movie_name="dunkirk"
     file_name="dunkirk.jpg"
@@ -220,6 +217,9 @@ def run_tutorial():
 
     preparation_program.run(None, 'dunkirk.jpg', "tutorial", 3, None)
     preparation_program.run(True, None, None, None, "checkerboard2")
+
+
+    mtx, dist = calibrate_camera()
 
     img2 = cv2.imread("images/dunkirk_test.jpg")
 
@@ -353,7 +353,7 @@ def run_realtime():
         rval, frame = vc.read()
         
         if startAugmenting:
-            compute_frame(frame)
+            compute_frame(frame, mtx, dist)
         
         key = cv2.waitKey(10)
         if key == 32: # Start augmentation on space
