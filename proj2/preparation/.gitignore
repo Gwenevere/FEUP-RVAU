@@ -3,4 +3,4 @@
 !.gitignore
 !*/
 
-!(camera_calibration/.gitkeep)
+!camera_calibration/.gitkeep
